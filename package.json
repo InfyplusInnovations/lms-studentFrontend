@@ -21,7 +21,7 @@
     "vuex": "^4.0.1"
   },
   "devDependencies": {
-    "@quasar/app-webpack": "^3.0.0",
+    "@quasar/app-webpack": "^3.5.3",
     "quasar-app-extension-tailwindcss": "^2.0.6"
   },
   "browserslist": [
