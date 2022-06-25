@@ -1,7 +1,12 @@
 import axios from "axios";
 import store from "../store/index";
 
-const jwtInterceptor = axios.create({ baseURL: "http://localhost:8000/" });
+let baseURL = `${process.env.SERVER_NAME}`;
+
+const jwtInterceptor = axios.create({
+  baseURL: baseURL,
+});
+
 // Set auth header for requests
 jwtInterceptor.interceptors.request.use((config) => {
   const authData = store.getters["auth/getJWT"];

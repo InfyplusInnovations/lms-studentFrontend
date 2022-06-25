@@ -10,19 +10,23 @@
     "dev": "quasar dev",
     "build": "quasar build",
     "build:pwa": "quasar build -m pwa",
-    "deploy": "push-dir --dir=dist/spa --remote=gh-pages --branch=master"
+    "deploy": "vercel"
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
+    "hls.js": "^1.1.5",
+    "moment": "^2.29.3",
     "quasar": "^2.6.0",
     "vue": "^3.0.0",
+    "vue-plyr": "^7.0.0",
     "vue-router": "^4.0.0",
-    "vuex": "^4.0.1"
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@quasar/app-webpack": "^3.0.0",
+    "dotenv": "^16.0.1",
     "push-dir": "^0.4.1",
     "quasar-app-extension-tailwindcss": "^2.0.6"
   },
