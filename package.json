@@ -25,7 +25,7 @@
     "vuex": "^4.0.2"
   },
   "devDependencies": {
-    "@quasar/app-webpack": "^3.0.0",
+    "@quasar/app-webpack": "^3.5.7",
     "dotenv": "^16.0.1",
     "push-dir": "^0.4.1",
     "quasar-app-extension-tailwindcss": "^2.0.6"
