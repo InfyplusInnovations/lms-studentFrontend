@@ -1,10 +1,10 @@
 <template>
-  <q-layout view="lHh lpR fFf" class="tw-h-screen tw-overflow-hidden">
-    <q-header bordered class="bg-white text-dark">
+  <q-layout view="lHh lpR fFf" class="h-screen overflow-hidden">
+    <q-header bordered class="bg-primary text-dark">
       <q-toolbar>
         <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
 
-        <q-toolbar-title>
+        <q-toolbar-title class="font-fredoka">
           <!-- <q-avatar>
             <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
           </q-avatar> -->
@@ -12,13 +12,19 @@
         </q-toolbar-title>
       </q-toolbar>
       <q-toolbar inset>
-        <q-breadcrumbs class="tw-flex tw-flex-wrap">
-          <q-breadcrumbs-el icon="home" to="/" label="home" />
+        <q-breadcrumbs class="flex flex-wrap font-fredoka text-lg">
+          <q-breadcrumbs-el
+            icon="home"
+            to="/"
+            label="home"
+            class="text-gray-900"
+          />
           <q-breadcrumbs-el
             v-for="(sRoute, index) in breadCrumbs"
             :to="sRoute"
             :key="index"
             :label="bdLinkNames[index]"
+            class="text-gray-900"
           />
           <!-- :label="$route.path.split('/')[index + 1]" -->
         </q-breadcrumbs>
@@ -29,30 +35,33 @@
       show-if-above
       v-model="leftDrawerOpen"
       side="left"
-      class="bg-primary text-white"
+      class="text-gray-900 bg-primary"
       :width="220"
+      bordered
     >
       <q-item
         clickable
         v-ripple
-        class="tw-my-5 tw-flex tw-justify-center tw-items-center"
+        class="my-5 flex justify-center items-center"
+        to="/"
       >
         <q-item-section side>
-          <q-avatar rounded size="56px">
-            <img src="/img/Logo.png" />
-          </q-avatar>
+          <q-item-section side>
+            <q-img src="/img/logo.svg" class="w-36" />
+          </q-item-section>
         </q-item-section>
         <!-- <q-item-section>
           <q-item-label class="text-weight-bold">Marengo</q-item-label>
         </q-item-section> -->
       </q-item>
-      <q-list bordered class="flex column q-gutter-md">
-        <div class="tw-flex tw-flex-col tw-gap-4">
+      <q-list class="flex column q-gutter-md">
+        <div class="flex flex-col gap-4">
           <Navlink
             v-for="(navItem, index) in navItems"
             :linkIcon="navItem.icon"
             :linkName="navItem.name"
             :linkTo="navItem.link"
+            :index="index"
             :key="index"
           />
         </div>
@@ -64,15 +73,21 @@
           @click="handleLogout"
         >
           <q-item-section avatar>
-            <q-icon color="white" name="logout" />
+            <q-icon
+              color="white"
+              class="bg-gradient-to-b from-indigo-500 to-indigo-700 text-white shadow-xl p-3 rounded-full"
+              name="logout"
+            />
           </q-item-section>
 
-          <q-item-section>Logout</q-item-section>
+          <q-item-section class="font-bold font-fredoka text-lg text-gray-800"
+            >Logout</q-item-section
+          >
         </q-item>
       </q-list>
     </q-drawer>
 
-    <q-page-container class="tw-overflow-y-scroll tw-h-full">
+    <q-page-container class="overflow-y-scroll h-full">
       <router-view />
     </q-page-container>
   </q-layout>
@@ -81,7 +96,7 @@
 import { ref, computed } from "vue";
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
-import Navlink from "src/components/Navlink.vue";
+import Navlink from "src/components/NavLink.vue";
 export default {
   components: { Navlink },
   setup() {
@@ -89,8 +104,8 @@ export default {
     const store = useStore();
     const router = useRouter();
     const route = useRoute();
-    const handleLogout = () => {
-      store.dispatch("auth/logoutApi");
+    const handleLogout = async () => {
+      await store.dispatch("auth/logoutApi");
       router.push("/login");
     };
     const generateBreadcrumbLinks = (rParams, rLinks) => {
@@ -165,7 +180,7 @@ export default {
 
     const navItems = [
       { name: "Home", link: "/", icon: "home" },
-      { name: "Courses", link: "/course", icon: "book" },
+      { name: "Courses", link: "/courses", icon: "book" },
       { name: "Profile", link: "/profile", icon: "person" },
       { name: "Support", link: "/support", icon: "support_agent" },
     ];

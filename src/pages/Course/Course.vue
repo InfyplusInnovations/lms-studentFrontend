@@ -3,73 +3,104 @@
     <router-view />
 
     <div class="" v-if="course !== null">
-      <div class="tw-h-2/3 md:tw-p-5 tw-overflow-y-auto">
-        <div class="tw-p-5">
-          <div class="tw-font-medium tw-text-xl tw-py-5">
+      <div class="h-2/3 md:p-5 overflow-y-auto">
+        <div class="p-5">
+          <div class="font-medium text-xl py-5">
             {{ course.cName }}
           </div>
         </div>
-        <div class="tw-flex tw-flex-wrap tw-justify-center tw-items-center">
-          <div class="md:tw-w-1/2 tw-w-full">
-            <div class="tw-min-w-md tw-min-h-full tw-bg-gray-800">
-              <VideoComp
-                v-if="course.cPreview"
-                :videoLink="course.cPreview"
-                :poster="`${cloudinary}${course.cThumbnail}`"
-              />
-            </div>
-          </div>
-          <div class="md:tw-w-1/2 tw-w-full">
-            <div class="tw-w-full tw-p-5">
-              <q-card class="tw-w-full tw-max-w-lg">
-                <q-card-section>
-                  <div class="row no-wrap items-center">
-                    <div class="col text-h6 ellipsis">
+        <div class="p-3">
+          <q-card
+            :class="`rounded-xl shadow-xl bg-gradient-to-b text-white ${
+              $route.params.cId % 4 == 0
+                ? 'from-blue-400 to-blue-700'
+                : $route.params.cId % 3 == 0
+                ? 'from-red-300 to-red-600'
+                : $route.params.cId % 2 == 0
+                ? 'from-green-500 to-green-700'
+                : $route.params.cId % 1 == 0
+                ? 'from-blue-500 to-blue-700'
+                : ''
+            } hover:shadow-2xl font-fredoka max-w-4xl w-full`"
+          >
+            <q-card-section class="flex gap-3 flex-wrap md:flex-row flex-col">
+              <div class="rounded-xl overflow-hidden">
+                <VideoComp
+                  v-if="course.cPreview"
+                  :videoLink="course.cPreview"
+                  :poster="`${cloudinary}${course.cThumbnail}`"
+                  class="max-w-md"
+                />
+              </div>
+              <div class="">
+                <div class="flex flex-col justify-between w-full">
+                  <div class="">
+                    <div class="text-xl font-bold">
                       {{ course.cName }}
                     </div>
+                    <div class="text-subtitle1">{{ course.cDescription }}</div>
+                    <div class="text-subtitle1">Price: {{ course.cPrice }}</div>
                   </div>
-                </q-card-section>
-
-                <q-card-section class="q-pt-none">
-                  <div class="text-subtitle1">Price: {{ course.cPrice }}</div>
-                </q-card-section>
-                <q-card-section
-                  class="text-caption text-grey"
-                  v-html="course.cDescription"
+                </div>
+              </div>
+            </q-card-section>
+            <q-card-section class="">
+              <q-card-actions align="right">
+                <q-btn
+                  color="accent"
+                  :to="`/course/${course.cId}/enroll`"
+                  v-if="
+                    enrollStatus.status != true ||
+                    enrollStatus.payment == 'Not Paid' ||
+                    enrollStatus.payment == 'Cancelled'
+                  "
                 >
-                </q-card-section>
-                <q-separator />
-
-                <q-card-actions>
-                  <q-btn
-                    color="primary"
-                    :to="`/course/${course.cId}/enroll`"
-                    v-if="enrollStatus != true"
-                  >
-                    Enroll
-                  </q-btn>
-                  <q-btn
-                    flat
-                    color="primary"
-                    :to="`/course/${course.cId}/modules`"
-                  >
-                    View Modules <q-icon name="arrow_right_alt"></q-icon>
-                  </q-btn>
-                </q-card-actions>
-              </q-card>
-            </div>
-          </div>
+                  Enroll
+                </q-btn>
+                <q-btn
+                  rounded
+                  :to="`/course/${course.cId}/modules`"
+                  class="bg-white text-blue-400"
+                  v-if="
+                    enrollStatus.status == true &&
+                    (enrollStatus.payment == 'Paid' ||
+                      enrollStatus.payment == 'Free')
+                  "
+                >
+                  View Modules <q-icon name="arrow_right_alt"></q-icon>
+                </q-btn>
+                <q-btn
+                  rounded
+                  :to="`/course/${course.cId}/syllabus`"
+                  class="bg-white text-blue-400"
+                  v-if="
+                    enrollStatus.status != true ||
+                    enrollStatus.payment == 'Not Paid' ||
+                    enrollStatus.payment == 'Cancelled'
+                  "
+                >
+                  View Syllabus <q-icon name="arrow_right_alt"></q-icon>
+                </q-btn>
+              </q-card-actions>
+            </q-card-section>
+          </q-card>
         </div>
       </div>
       <q-separator />
-      <div class="tw-h-1/3 tw-p-5">
-        <div class="tw-p-3">
-          <div class="tw-font-medium tw-text-xl tw-py-5">
+      <div class="h-1/3 p-5">
+        <div
+          class="p-3"
+          v-if="
+            enrollStatus.status == true &&
+            (enrollStatus.payment == 'Paid' || enrollStatus.payment == 'Free')
+          "
+        >
+          <div class="font-medium text-xl py-5">
             Modules in {{ course.cName }}
           </div>
-          <div class="flex tw-gap-3">
+          <div class="flex gap-3">
             <div
-              class="tw-max-w-md tw-w-full"
+              class="max-w-md w-full"
               v-for="(module, index) in modules"
               :key="index"
             >
@@ -77,13 +108,25 @@
             </div>
           </div>
         </div>
+
+        <div class="flex justify-center items-center" v-else>
+          Course Locked
+          <div class="">
+            <q-btn
+              :to="`/course/${course.cId}/enroll`"
+              unelevated
+              class="bg-none text-blue-700"
+              >Enroll to the course</q-btn
+            >
+          </div>
+        </div>
       </div>
     </div>
-    <div class="tw-p-3" v-else>loading</div>
+    <div class="p-3" v-else>loading</div>
   </q-page>
 </template>
 <script>
-import { computed, onBeforeUpdate, onMounted, ref } from "@vue/runtime-core";
+import { computed, onBeforeUpdate, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 
@@ -122,7 +165,7 @@ export default {
 
     let activeOrder = computed(() => {
       if (lastActiveLesson.value !== undefined) {
-        let order = 0;
+        let order = modules.value[0].order;
         modules.value.forEach((module) => {
           // if streamstatus completed &&
           if (module.mId == lastActiveLesson.value.mId) {
@@ -131,7 +174,7 @@ export default {
         });
         return order;
       }
-      return 0;
+      return modules.value[0].order;
     });
     return {
       course,

@@ -1,14 +1,14 @@
 <template>
   <q-page>
     <router-view :key="$route.fullPath" />
-    <div class="">
+    <div class="p-3">
       <div class="" v-if="pageLoad">
         <div class="">
           <div class="" v-if="lesson.videoId == undefined">
             <h4>Purchase the full course to view this lesson</h4>
             <q-btn
               :to="`/course/${$route.params.cId}`"
-              class="bg-primary tw-text-white"
+              class="bg-accent text-white"
               rounded
               flat
               >Enroll</q-btn
@@ -16,13 +16,11 @@
           </div>
 
           <div
-            class="tw-py-5 tw-flex tw-justify-center tw-items-start tw-flex-wrap"
+            class="py-5 flex justify-center items-start flex-wrap"
             v-else-if="lessonStatus === true"
           >
-            <div
-              class="tw-w-full tw-bg-gray-300 tw-flex tw-justify-center tw-items-center"
-            >
-              <div class="md:tw-max-w-3xl tw-w-full">
+            <div class="w-full bg-gray-300 flex justify-center items-center">
+              <div class="md:max-w-3xl w-full">
                 <VideoComp
                   v-if="lesson.videoId"
                   :videoLink="lesson.videoId"
@@ -33,11 +31,9 @@
                 />
               </div>
             </div>
-            <div
-              class="tw-p-5 tw-flex tw-justify-between tw-items-start tw-w-full"
-            >
+            <div class="p-5 flex justify-between items-start w-full">
               <div class="">
-                <div class="tw-text-2xl">
+                <div class="text-2xl">
                   {{ lesson.lName }}
                 </div>
                 <div class="subtext">{{ lesson.lDescription }}</div>
@@ -45,35 +41,34 @@
               <q-btn
                 unelevated
                 rounded
-                color="primary"
+                color="accent"
                 @click="handleNext"
                 :disable="nextActive !== true"
                 :label="nextBtn.name"
-                class="tw-capitalize"
+                class="capitalize"
               >
               </q-btn>
             </div>
           </div>
-          <div class="tw-p-5" v-else>
+          <div class="p-5" v-else>
             <h4>You Havent Unlocked this Lesson Yet!{{ lessonStatus }}</h4>
-            <q-btn to="/" class="bg-primary tw-text-white" rounded flat
-              >home</q-btn
-            >
+            <q-btn to="/" class="bg-accent text-white" rounded flat>home</q-btn>
           </div>
         </div>
-        <div class="tw-p-3">
+        <div class="p-3">
           <q-tabs
             v-model="tab"
             dense
             class="text-grey"
-            active-color="primary"
-            indicator-color="primary"
+            active-color="accent"
+            indicator-color="accent"
             align="left"
             narrow-indicator
           >
             <q-tab name="Details" icon="info" label="Details" />
 
             <q-tab name="Comments" icon="comment" label="Comments" />
+            <q-tab name="Notes" icon="note" label="Notes" />
           </q-tabs>
           <q-separator horizontal />
           <q-tab-panels v-model="tab" animated>
@@ -86,6 +81,10 @@
               <div class="text-h6">All Comments</div>
               Lorem ipsum dolor sit amet consectetur adipisicing elit.
             </q-tab-panel>
+            <q-tab-panel name="Notes">
+              <div class="text-h6">Notes</div>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            </q-tab-panel>
           </q-tab-panels>
         </div>
       </div>
@@ -96,11 +95,12 @@
 <script>
 import {
   computed,
+  onBeforeUnmount,
   onBeforeUpdate,
   onMounted,
   ref,
   watch,
-} from "@vue/runtime-core";
+} from "vue";
 import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import VideoComp from "src/components/VideoComp.vue";
@@ -174,6 +174,7 @@ export default {
       await fetchData();
       pageLoad.value = true;
     });
+
     let nextBtn = computed(() => {
       let btnValue = {
         name: "Finish Course",

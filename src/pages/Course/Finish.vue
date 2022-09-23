@@ -1,12 +1,12 @@
 <template>
   <q-page>
     <router-view />
-    <div class="tw-flex tw-p-3 tw-justify-center tw-items-center">
+    <div class="flex p-3 justify-center items-center">
       <div class="">
         <q-icon name="check" class="" size="200px" />
       </div>
       <div class="">
-        <div class="tw-text-lg">
+        <div class="text-lg">
           You have successfully completed {{ course.cName }}!
         </div>
       </div>
@@ -14,7 +14,7 @@
   </q-page>
 </template>
 <script>
-import { computed, onMounted } from "@vue/runtime-core";
+import { computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";
 export default {

@@ -3,14 +3,14 @@
     <router-view />
 
     <div class="">
-      <div class="tw-h-1/3 tw-p-5">
-        <div class="tw-p-3">
-          <div class="tw-font-medium tw-text-xl tw-py-5">
+      <div class="h-1/3 p-5">
+        <div class="p-3">
+          <div class="font-medium text-xl py-5">
             Lessons in {{ module.mName }}
           </div>
-          <div class="flex tw-gap-3 tw-flex-wrap">
+          <div class="flex gap-3 flex-wrap">
             <div
-              class="tw-max-w-md tw-w-full"
+              class="max-w-md w-full"
               v-for="(lesson, index) in lessons"
               :key="index"
             >
@@ -36,7 +36,7 @@
   </q-page>
 </template>
 <script>
-import { computed, onMounted, ref } from "@vue/runtime-core";
+import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import Lesson from "src/components/Lesson.vue";

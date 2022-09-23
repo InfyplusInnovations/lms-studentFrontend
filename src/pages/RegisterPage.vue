@@ -2,35 +2,25 @@
   <q-layout>
     <!-- this is where the Pages are injected -->
     <q-page class="q-py-none">
-      <div class="tw-h-screen flex">
-        <div class="bg-primary md:tw-block tw-hidden md:tw-w-1/2 tw-w-full">
-          <div class="md:tw-flex tw-justify-center tw-items-center tw-h-full">
-            <img src="/img/register/register.svg" alt="" class="tw-max-w-lg" />
+      <div class="h-screen flex">
+        <div class="bg-blue-700 gt-sm md:w-1/2 w-full">
+          <div class="md:flex justify-center items-center h-full">
+            <img src="/img/register/register.svg" alt="" class="max-w-lg" />
           </div>
         </div>
         <div
-          class="bg-white tw-flex tw-justify-center tw-flex-col tw-items-center md:tw-w-1/2 tw-w-full tw-p-5"
+          class="bg-white flex justify-center flex-col items-center md:w-1/2 w-full p-5"
         >
-          <div class="tw-text-center">
+          <div class="text-center">
             <div class="">
-              <img
-                src="/img/Logo_Dark.png"
-                alt=""
-                class="tw-w-20"
-                draggable="false"
-              />
-              <div class="text-subtitle1 tw-font-bold text-primary">
-                Marengo
-              </div>
+              <img src="/img/logo.svg" alt="" class="w-36" draggable="false" />
             </div>
             <div class="">
-              <div class="tw-py-5 tw-font-bold tw-text-xl">
-                Student Register
-              </div>
+              <div class="py-5 font-bold text-xl">Student Register</div>
             </div>
           </div>
           <!-- <form
-            class="q-gutter-y-md tw-flex tw-flex-col tw-justify-center tw-items-center"
+            class="q-gutter-y-md flex flex-col justify-center items-center"
             @submit.prevent="handleFormSubmit"
           >
             <q-input
@@ -55,7 +45,7 @@
               rounded
               color="primary"
               label="Login"
-              class="tw-block tw-w-full"
+              class="block w-full"
               type="submit"
             >
               <q-spinner-ios v-if="loading" color="white" size="1em"
@@ -65,7 +55,7 @@
             <q-stepper
               v-model="step"
               ref="stepper"
-              color="primary"
+              color="accent"
               animated
               :contracted="$q.screen.lt.md"
             >
@@ -75,27 +65,31 @@
                 icon="create_new_folder"
                 :done="step > 1"
               >
-                <div class="tw-flex tw-flex-col tw-gap-3">
+                <div class="flex flex-col gap-3">
                   <q-input
                     rounded
                     outlined
                     v-model="fullname"
                     label="Fullname"
+                    placeholder="Enter your Fullname"
                     dense
                     :rules="[(fullname) => !!fullname || 'Field is required']"
                     required
                     class=""
+                    color="accent"
                   />
                   <q-input
                     rounded
                     outlined
                     v-model="sclass"
                     label="class"
+                    placeholder="Enter your Class"
                     dense
                     :rules="[(sclass) => !!sclass || 'Field is required']"
                     required
                     type="text"
                     class=""
+                    color="accent"
                   />
                   <q-input
                     rounded
@@ -104,7 +98,9 @@
                     dense
                     required
                     mask="date"
+                    placeholder="Date of Birth"
                     :rules="['date']"
+                    color="accent"
                   >
                     <template v-slot:append>
                       <q-icon name="event" class="cursor-pointer">
@@ -114,12 +110,16 @@
                           transition-show="scale"
                           transition-hide="scale"
                         >
-                          <q-date v-model="date">
+                          <q-date
+                            v-model="date"
+                            aria-placeholder="DOB"
+                            color="accent"
+                          >
                             <div class="row items-center justify-end">
                               <q-btn
                                 v-close-popup
                                 label="Close"
-                                color="primary"
+                                color="accent"
                                 flat
                               />
                             </div>
@@ -137,8 +137,11 @@
                     :rules="[(val) => !!val || 'Field is required']"
                     required
                     type="text"
+                    placeholder="Enter your phone"
                     class=""
+                    color="accent"
                   />
+
                   <q-input
                     rounded
                     outlined
@@ -148,7 +151,9 @@
                     :rules="[(val) => !!val || 'Field is required']"
                     required
                     type="text"
+                    placeholder="Enter your school"
                     class=""
+                    color="accent"
                   />
                   <q-input
                     rounded
@@ -159,7 +164,9 @@
                     :rules="[(val) => !!val || 'Field is required']"
                     required
                     type="text"
+                    placeholder="Enter your District"
                     class=""
+                    color="accent"
                   />
                 </div>
               </q-step>
@@ -170,7 +177,7 @@
                 icon="settings"
                 :done="step > 2"
               >
-                <div class="tw-flex tw-flex-col tw-gap-3">
+                <div class="flex flex-col gap-3">
                   <q-input
                     rounded
                     outlined
@@ -179,8 +186,49 @@
                     dense
                     :rules="[(val) => !!val || 'Field is required']"
                     required
+                    placeholder="Enter your username"
                     class=""
-                  />
+                    color="accent"
+                    :hint="
+                      usernameExists == true ? 'Username already exists!' : ''
+                    "
+                    @keyup="checkUsername"
+                  >
+                    <template
+                      v-if="usernameExists != true && username.length > 0"
+                      v-slot:append
+                    >
+                      <q-icon name="check" color="green" />
+                    </template>
+                    <template v-else v-slot:append>
+                      <q-icon name="close" color="red" />
+                    </template>
+                  </q-input>
+                  <q-input
+                    rounded
+                    outlined
+                    v-model="email"
+                    label="Email"
+                    dense
+                    :rules="[(val) => !!val || 'Field is required']"
+                    :hint="emailExists == true ? 'Email already exists!' : ''"
+                    required
+                    type="email"
+                    placeholder="Enter your Email"
+                    class=""
+                    color="accent"
+                    @keyup="checkEmail"
+                  >
+                    <template
+                      v-if="emailExists != true && email.length > 0"
+                      v-slot:append
+                    >
+                      <q-icon name="check" color="green" />
+                    </template>
+                    <template v-else v-slot:append>
+                      <q-icon name="close" color="red" />
+                    </template>
+                  </q-input>
                   <q-input
                     rounded
                     outlined
@@ -190,7 +238,9 @@
                     :rules="[(val) => !!val || 'Field is required']"
                     required
                     type="password"
+                    placeholder="Enter your password"
                     class=""
+                    color="accent"
                   />
                   <q-input
                     rounded
@@ -204,12 +254,14 @@
                         password == confirmPass || 'Passwords should match',
                     ]"
                     type="password"
+                    placeholder="Confirm your password"
                     class=""
+                    color="accent"
                   />
                 </div>
               </q-step>
               <q-step :name="3" title="Finish" icon="settings" :done="step > 3">
-                <div class="tw-flex tw-flex-col tw-gap-3">
+                <div class="flex flex-col gap-3">
                   <q-icon name="tick"></q-icon>
                   we will create you an account and let you know via email
                 </div>
@@ -219,17 +271,17 @@
                   <q-btn
                     @click="
                       () => {
-                        if (step > 2) return handleFormSubmit();
+                        if (step == 2) return handleFormSubmit();
                         return $refs.stepper.next();
                       }
                     "
-                    color="primary"
+                    color="accent"
                     :label="step === 3 ? 'Accept' : 'Continue'"
                   />
                   <q-btn
                     v-if="step > 1"
                     flat
-                    color="primary"
+                    color="accent"
                     @click="$refs.stepper.previous()"
                     label="Back"
                     class="q-ml-sm"
@@ -252,16 +304,18 @@
                 <q-btn
                   flat
                   label="OK"
-                  color="primary"
+                  color="accent"
                   v-close-popup
                   @click="error = false"
                 />
               </q-card-actions>
             </q-card>
           </q-dialog>
-          <div class="tw-p-3 text-primary">
+          <div class="p-3">
             Already have an account
-            <router-link to="/login" class="tw-font-bold">Login</router-link>
+            <router-link to="/login" class="font-bold no-underline text-accent"
+              >Login</router-link
+            >
           </div>
         </div>
       </div>
@@ -269,16 +323,16 @@
   </q-layout>
 </template>
 <script>
-import { ref } from "@vue/reactivity";
+import { onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
-import { computed } from "@vue/runtime-core";
+import { computed } from "vue";
 
 export default {
-  name: "Login",
   setup() {
     let username = ref("");
     let password = ref("");
+    let email = ref("");
     let confirmPass = ref("");
     let fullname = ref("");
     let sclass = ref("");
@@ -288,8 +342,14 @@ export default {
     let school = ref("");
     let error = ref(false);
     let step = ref(1);
+    let delay = ref(false);
     const store = useStore();
     const router = useRouter();
+    let usernameExists = computed(() => store.getters["auth/getUserExists"]);
+    let emailExists = computed(() => store.getters["auth/getEmailExists"]);
+    // onMounted(async()=>{
+
+    // })
     const handleFormSubmit = async () => {
       if (
         fullname.value == "" ||
@@ -306,17 +366,47 @@ export default {
         step.value = 2;
       } else {
         let payload = {
-          fullname: fullname.value,
+          sName: fullname.value,
           username: username.value,
-          confirmPass: confirmPass.value,
-          sclass: sclass.value,
+          password: confirmPass.value,
+          sClass: sclass.value,
           school: school.value,
-          date: date.value,
-          phone: phone.value,
-          district: district.value,
+          sDOB: date.value.replaceAll("/", "-"),
+          sMobile: phone.value,
+          sDistrict: district.value,
+          email: email.value,
         };
-        store.dispatch("auth/registerNewUser", payload);
-        router.push("/login");
+        let res = await store.dispatch("auth/registerNewUser", payload);
+        if (res == true) {
+          step.value = 3;
+          setTimeout(() => {
+            router.push("/login");
+          }, 1000);
+        }
+      }
+    };
+    const setDelay = () => {
+      delay.value = true;
+      setTimeout(async () => {
+        delay.value = false;
+        await store.dispatch("auth/checkUsername", username.value);
+      }, 1000);
+    };
+    const checkUsername = async () => {
+      if (delay.value !== true) {
+        setDelay();
+      }
+    };
+    const setEmailDelay = () => {
+      delay.value = true;
+      setTimeout(async () => {
+        delay.value = false;
+        await store.dispatch("auth/checkEmail", email.value);
+      }, 1000);
+    };
+    const checkEmail = async () => {
+      if (delay.value !== true) {
+        setEmailDelay();
       }
     };
     return {
@@ -332,6 +422,11 @@ export default {
       district,
       error,
       step,
+      email,
+      checkUsername,
+      usernameExists,
+      checkEmail,
+      emailExists,
     };
   },
 };

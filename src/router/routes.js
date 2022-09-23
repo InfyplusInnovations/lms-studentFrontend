@@ -4,7 +4,7 @@ const routes = [
   {
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
-    children: [{ path: "", component: () => import("pages/Home.vue") }],
+    children: [{ path: "", component: () => import("pages/HomePage.vue") }],
     meta: {
       title: "Home",
       auth: true,
@@ -18,7 +18,7 @@ const routes = [
   },
   {
     path: "/login",
-    component: () => import("pages/Login.vue"),
+    component: () => import("pages/LoginPage.vue"),
     meta: {
       title: "Login",
       auth: false,
@@ -33,7 +33,7 @@ const routes = [
   },
   {
     path: "/register",
-    component: () => import("pages/Register.vue"),
+    component: () => import("pages/RegisterPage.vue"),
     meta: {
       title: "register",
       auth: false,
@@ -45,16 +45,15 @@ const routes = [
     },
     name: "register",
   },
-
   {
-    path: "/course",
+    path: "/courses",
     component: () => import("layouts/MainLayout.vue"),
-    children: [{ path: "", component: () => import("pages/Course/Index.vue") }],
+    children: [{ path: "", component: () => import("pages/CoursesPage.vue") }],
     meta: {
-      title: "Course",
+      title: "courses",
       auth: true,
       breadcrumbs: {
-        links: ["course"],
+        links: ["courses"],
         params: [],
         paramNameGetter: [],
       },
@@ -63,9 +62,27 @@ const routes = [
     beforeEnter: authGaurd,
   },
   {
+    path: "/courses/:catId",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      { path: "", component: () => import("pages/Courses/index.vue") },
+    ],
+    meta: {
+      title: "courses",
+      auth: true,
+      breadcrumbs: {
+        links: ["courses", "paramId"],
+        params: ["catId"],
+        paramNameGetter: [],
+      },
+    },
+    name: "Courses Cat",
+    beforeEnter: authGaurd,
+  },
+  {
     path: "/profile",
     component: () => import("layouts/MainLayout.vue"),
-    children: [{ path: "", component: () => import("pages/Profile.vue") }],
+    children: [{ path: "", component: () => import("pages/ProfilePage.vue") }],
     meta: {
       title: "Profile",
       auth: true,
@@ -76,6 +93,24 @@ const routes = [
       },
     },
     name: "profile",
+    beforeEnter: authGaurd,
+  },
+  {
+    path: "/course",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [{ path: "", component: () => import("pages/Course/Index.vue") }],
+    meta: {
+      title: "Course",
+      auth: true,
+      breadcrumbs: {
+        links: ["course", "paramId"],
+        params: ["cId"],
+        paramNameGetter: [
+          { getter: "course/getCourseById", nameAttr: "cName" },
+        ],
+      },
+    },
+    name: "CourseSub",
     beforeEnter: authGaurd,
   },
   {
@@ -96,6 +131,26 @@ const routes = [
       },
     },
     name: "Course",
+    beforeEnter: authGaurd,
+  },
+  {
+    path: "/course/:cId/syllabus",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      { path: "", component: () => import("pages/Course/Syllabus.vue") },
+    ],
+    meta: {
+      title: "Course Syllubus",
+      auth: true,
+      breadcrumbs: {
+        links: ["course", "paramId", "syllabus"],
+        params: ["cId"],
+        paramNameGetter: [
+          { getter: "course/getCourseById", nameAttr: "cName" },
+        ],
+      },
+    },
+    name: "courseSyllabus",
     beforeEnter: authGaurd,
   },
   // ENROLL
@@ -244,7 +299,7 @@ const routes = [
   {
     path: "/profile",
     component: () => import("layouts/MainLayout.vue"),
-    children: [{ path: "", component: () => import("pages/Home.vue") }],
+    children: [{ path: "", component: () => import("pages/ProfilePage.vue") }],
     meta: {
       title: "Profile",
       auth: true,
@@ -258,9 +313,23 @@ const routes = [
     beforeEnter: authGaurd,
   },
   {
+    path: "/forgot",
+    component: () => import("pages/ForgotPage.vue"),
+    meta: {
+      title: "Forgot",
+      auth: true,
+      breadcrumbs: {
+        links: ["forgot"],
+        params: [],
+        paramNameGetter: [],
+      },
+    },
+    name: "forgot",
+  },
+  {
     path: "/support",
     component: () => import("layouts/MainLayout.vue"),
-    children: [{ path: "", component: () => import("pages/Support.vue") }],
+    children: [{ path: "", component: () => import("pages/SupportPage.vue") }],
     meta: {
       title: "Support",
       auth: true,

@@ -2,6 +2,7 @@ import jwtInterceptor from "../../helpers/jwtInterceptor";
 const state = () => ({
   loading: false,
   enrolls: [],
+  enroll: {},
   enrolledCourses: [],
   respnoseStatus: {
     error: false,
@@ -12,21 +13,25 @@ const getters = {
   getEnrolls(state) {
     return state.enrolls;
   },
+  getEnroll(state) {
+    return state.enroll;
+  },
   getEnrolledCourses(state) {
     return state.enrolledCourses;
   },
   getResponseStatus(state) {
-    return state.enrolledCourses;
+    return state.respnoseStatus;
   },
   getLoading(state) {
     return state.loading;
   },
   getEnrolledStatus: (state) => (cId) => {
     let course = state.enrolledCourses.filter((crs) => crs.cId == cId);
+    let enroll = state.enrolls.filter((enrl) => enrl.cId == cId);
     if (course.length > 0) {
-      return true;
+      return { status: true, eId: enroll[0].eId, payment: enroll[0].status };
     } else {
-      return false;
+      return { status: false };
     }
   },
 };
@@ -63,7 +68,7 @@ const actions = {
         credentials: "include",
       })
       .catch((err) => {
-        console.log(err);
+        commit("setError", err.response.data);
       });
 
     if (response && response.data) {
@@ -85,6 +90,15 @@ const mutations = {
   },
   setLoading(state, data) {
     state.loading = data;
+  },
+  setError(state, data) {
+    state.respnoseStatus.error = true;
+    console.log(data);
+    if (data.status == "error") {
+      state.respnoseStatus.msg = data.message;
+    } else {
+      state.respnoseStatus.msg = "Something went wrong";
+    }
   },
 };
 

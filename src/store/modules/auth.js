@@ -4,7 +4,12 @@ const state = () => ({
   jwt: null,
   loginLoading: false,
   registerLoading: false,
-  error: false,
+  usernameExists: false,
+  emailExists: false,
+  respnoseStatus: {
+    error: false,
+    msg: "",
+  },
   cloudinary: `${process.env.CLOUDINARY_URL}`,
   user: {
     sId: 1,
@@ -23,8 +28,8 @@ const getters = {
   getJWT(state) {
     return state.jwt;
   },
-  getError(state) {
-    return state.error;
+  getResponseStatus(state) {
+    return state.responseStatus;
   },
   getUser(state) {
     return state.user;
@@ -32,12 +37,20 @@ const getters = {
   getCloudinaryURL(state) {
     return state.cloudinary;
   },
+  getUserExists(state) {
+    return state.usernameExists;
+  },
+  getEmailExists(state) {
+    return state.emailExists;
+  },
 };
 
 const actions = {
+  async resetError({ commit, state }) {
+    commit("setResponseStatus", { error: false, msg: "" });
+  },
   async loginApi({ commit, state }, payload) {
-    commit("setError", false);
-
+    commit("setResponseStatus", { error: false, msg: "" });
     const response = await jwtInterceptor
       .post("api/login", payload, {
         withCredentials: true,
@@ -45,19 +58,31 @@ const actions = {
       })
       .catch((err) => {
         console.log(err);
+        return err.response;
       });
-
     if (response && response.data) {
-      commit("setLoginApiStatus", true);
-      commit("setJWTToken", response.data.token);
-      return true;
+      if (response.status !== 200) {
+        commit("setResponseStatus", {
+          error: true,
+          msg: response.data.message,
+        });
+        return false;
+      } else {
+        commit("setLoginApiStatus", true);
+        commit("setJWTToken", response.data.token);
+        commit("setResponseStatus", { error: false, msg: "success" });
+        return true;
+      }
     } else {
       commit("setLoginApiStatus", false);
       commit("setJWTToken", null);
+      commit("setResponseStatus", {
+        error: true,
+        msg: "something went wrong",
+      });
       return false;
     }
   },
-
   async refreshAuth({ commit, state }) {
     const response = await jwtInterceptor
       .get("api/refresh", {
@@ -77,13 +102,23 @@ const actions = {
     return response;
   },
   async logoutApi({ commit, state }) {
-    commit("setError", false);
-    localStorage.setItem("login", false);
-    commit("setLoginApiStatus", localStorage.getItem("login"));
+    const response = await jwtInterceptor
+      .get("api/logout", {
+        withCredentials: true,
+        credentials: "include",
+      })
+      .then((res) => {
+        commit("setError", false);
+        localStorage.setItem("login", false);
+        commit("setLoginApiStatus", localStorage.getItem("login"));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     return false;
   },
   async registerNewUser({ commit, state }, payload) {
-    commit("setError", false);
+    commit("setResponseStatus", { error: false, msg: "" });
     const response = await jwtInterceptor
       .post("api/register", payload, {
         withCredentials: true,
@@ -91,12 +126,79 @@ const actions = {
       })
       .catch((err) => {
         console.log(err);
+        return err.response;
       });
     if (response && response.data) {
-      commit("setError", false);
-      return true;
+      if (response.status == 201) {
+        commit("setResponseStatus", { error: false, msg: "success" });
+        console.log("success");
+        return true;
+      } else {
+        commit("setResponseStatus", {
+          error: true,
+          msg: response.data.message,
+        });
+        console.log("failed");
+        return false;
+      }
     } else {
-      commit("setError", true);
+      commit("setResponseStatus", { error: true, msg: "something went wrong" });
+      return false;
+    }
+  },
+  async checkUsername({ commit, state }, payload) {
+    const response = await jwtInterceptor
+      .post(
+        "api/checkUsername",
+        { username: payload },
+        {
+          withCredentials: true,
+          credentials: "include",
+        }
+      )
+      .catch((err) => {
+        console.log(err);
+        return err.response;
+      });
+
+    if (response && response.data) {
+      if (response.status !== 200) {
+        commit("setUsernameExists", true);
+        return true;
+      } else {
+        commit("setUsernameExists", false);
+        return false;
+      }
+    } else {
+      commit("setUsernameExists", false);
+      return false;
+    }
+  },
+  async checkEmail({ commit, state }, payload) {
+    const response = await jwtInterceptor
+      .post(
+        "api/checkEmail",
+        { email: payload },
+        {
+          withCredentials: true,
+          credentials: "include",
+        }
+      )
+      .catch((err) => {
+        console.log(err);
+        return err.response;
+      });
+
+    if (response && response.data) {
+      if (response.status !== 200) {
+        commit("setEmailExists", true);
+        return true;
+      } else {
+        commit("setEmailExists", false);
+        return false;
+      }
+    } else {
+      commit("setEmailExists", false);
       return false;
     }
   },
@@ -106,8 +208,8 @@ const mutations = {
   setLoginApiStatus(state, data) {
     state.loginApiStatus = data;
   },
-  setError(state, data) {
-    state.error = data;
+  setResponseStatus(state, data) {
+    state.responseStatus = data;
   },
   setJWTToken(state, data) {
     state.jwt = data;
@@ -117,6 +219,12 @@ const mutations = {
   },
   setUserData(state, data) {
     state.user = data.data;
+  },
+  setUsernameExists(state, data) {
+    state.usernameExists = data;
+  },
+  setEmailExists(state, data) {
+    state.emailExists = data;
   },
 };
 

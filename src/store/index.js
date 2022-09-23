@@ -7,6 +7,9 @@ import lesson from "./modules/lesson";
 import exam from "./modules/exam";
 import streamStatus from "./modules/streamStatus";
 import profile from "./modules/profile";
+import category from "./modules/category";
+import syllabus from "./modules/syllabus";
+import payment from "./modules/payment";
 const store = createStore({
   modules: {
     auth: authModule,
@@ -17,6 +20,9 @@ const store = createStore({
     module,
     streamStatus,
     profile,
+    category,
+    syllabus,
+    payment,
   },
 });
 

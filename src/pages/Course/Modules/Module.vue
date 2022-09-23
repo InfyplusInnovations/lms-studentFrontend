@@ -3,60 +3,67 @@
     <router-view />
 
     <div class="">
-      <div class="tw-h-2/3 tw-p-5 tw-overflow-y-auto">
-        <div class="tw-p-5">
-          <div class="tw-font-medium tw-text-xl tw-py-5">
+      <div class="h-2/3 p-5 overflow-y-auto">
+        <div class="p-5" v-if="course">
+          <div class="font-medium text-xl py-5">
             {{ course.cName }}-{{ module.mName }}
           </div>
         </div>
-        <div class="tw-flex tw-flex-wrap tw-justify-center tw-items-center">
-          <div class="md:tw-w-1/2 tw-w-full">
-            <div class="tw-w-full tw-relative tw-p-5">
-              <div class="tw-w-full">
-                <q-img :src="`${cloudinary}${module.mThumbnail}`" />
+        <div class="flex flex-wrap justify-start items-center">
+          <q-card
+            :class="`rounded-xl shadow-xl bg-gradient-to-b text-white max-w-2xl ${
+              $route.params.cId == 0
+                ? 'from-blue-400 to-blue-700'
+                : $route.params.cId == 1
+                ? 'from-red-300 to-red-600'
+                : $route.params.cId == 2
+                ? 'from-green-500 to-green-700'
+                : $route.params.cId == 3
+                ? 'from-blue-500 to-blue-700'
+                : ''
+            } hover:shadow-2xl font-fredoka max-w-2xl w-full`"
+          >
+            <q-card-section class="flex flex-col md:flex-row gap-3">
+              <div class="max-w-xs w-full overflow-hidden">
+                <q-img
+                  :src="`${cloudinary}${module.mThumbnail}`"
+                  class="rounded-xl w-full"
+                />
               </div>
-            </div>
-          </div>
-          <div class="md:tw-w-1/2 tw-w-full">
-            <div class="tw-w-full tw-p-5">
-              <q-card class="tw-w-full tw-max-w-lg">
-                <q-card-section>
-                  <div class="row no-wrap items-center">
-                    <div class="col text-h6 ellipsis">
-                      {{ module.mName }}
-                    </div>
+              <div class="flex flex-col justify-between">
+                <div class="">
+                  <div class="text-xl font-bold">
+                    {{ module.mName }}
                   </div>
-                </q-card-section>
-
-                <q-card-section class="q-pt-none">
                   <div class="text-subtitle1">{{ module.mDescription }}</div>
-                </q-card-section>
-
-                <q-separator />
-
-                <q-card-actions>
+                </div>
+              </div>
+            </q-card-section>
+            <q-card-section>
+              <div class="">
+                <q-card-actions align="right">
                   <q-btn
-                    flat
-                    color="primary"
+                    rounded
+                    class="bg-white text-blue-400"
                     :to="`/course/${module.cId}/modules/${module.mId}/lessons`"
                   >
                     View Lessons <q-icon name="arrow_right_alt"></q-icon>
                   </q-btn>
                 </q-card-actions>
-              </q-card>
-            </div>
-          </div>
+              </div>
+            </q-card-section>
+          </q-card>
         </div>
       </div>
       <q-separator />
-      <div class="tw-h-1/3 tw-p-5">
-        <div class="tw-p-3">
-          <div class="tw-font-medium tw-text-xl tw-py-5">
+      <div class="h-1/3 p-5 font-fredoka font-bold text-lg">
+        <div class="p-3">
+          <div class="font-medium text-xl py-5">
             Lessons in {{ module.mName }}
           </div>
-          <div class="flex tw-gap-3">
+          <div class="flex gap-3">
             <div
-              class="tw-max-w-md tw-w-full"
+              class="max-w-md w-full"
               v-for="(lesson, index) in lessons"
               :key="index"
             >
@@ -74,7 +81,7 @@
   </q-page>
 </template>
 <script>
-import { computed, onMounted } from "@vue/runtime-core";
+import { computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import Lesson from "src/components/Lesson.vue";
@@ -110,7 +117,7 @@ export default {
     });
 
     let activeOrder = computed(() => {
-      let order = 0;
+      let order = lessons.value[0].order;
       if (lastActiveLesson.value !== undefined) {
         lessons.value.forEach((lesson, index) => {
           // if streamstatus completed &&

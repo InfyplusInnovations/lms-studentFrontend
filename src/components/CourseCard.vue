@@ -1,10 +1,33 @@
 <template>
-  <q-card class="tw-w-72">
-    <q-img :src="`${cloudinary}${course.cThumbnail}`" />
+  <q-card
+    :class="`w-64 rounded-xl shadow-xl bg-gradient-to-b ${
+      index == 0
+        ? 'from-blue-400 to-blue-700'
+        : index == 1
+        ? 'from-red-300 to-red-600'
+        : index == 2
+        ? 'from-green-500 to-green-700'
+        : index == 3
+        ? 'from-blue-500 to-blue-700'
+        : ''
+    } hover:shadow-2xl font-fredoka relative`"
+  >
+    <div
+      class="absolute top-0 right-0 px-3 p-2 z-10 bg-gray-700 text-white rounded-xl shadow-inner"
+      v-if="enroll && expiry !== null"
+    >
+      expires in {{ expiry }}
+    </div>
+    <q-card-section class="h-48 overflow-hidden">
+      <q-img
+        :src="`${cloudinary}${course.cThumbnail}`"
+        class="rounded-xl h-full"
+      />
+    </q-card-section>
 
     <q-card-section>
       <div class="row no-wrap items-center">
-        <div class="col text-h6 ellipsis">
+        <div class="col text-h6 ellipsis text-white">
           {{ course.cName }}
         </div>
         <!-- <div
@@ -16,11 +39,18 @@
     </q-card-section>
 
     <q-card-section class="q-pt-none">
-      <div class="text-subtitle1">
-        <q-icon name="paid" class="tw-text-yellow-400 tw-text-xl" />
-        {{ course.cPrice }}
+      <div class="text-subtitle1 text-white">
+        <q-icon name="paid" class="text-white text-xl" />
+        {{
+          (enroll && enroll.status == "Paid") ||
+          (enroll && enroll.status == "Free")
+            ? "Enrolled"
+            : course && course.cPrice == 0
+            ? "Free"
+            : course.cPrice
+        }}
       </div>
-      <div class="text-caption text-grey">
+      <div class="text-caption text-white text-lg">
         {{
           String(course.cDescription)
             .replace(/<[^>]*>?/gm, "")
@@ -29,40 +59,94 @@
       </div>
     </q-card-section>
 
-    <q-separator />
-
-    <q-card-actions align="right" v-if="stream && stream.cId == course.cId">
+    <q-card-actions
+      align="right"
+      v-if="stream && stream.cId == course.cId"
+      class=""
+    >
       <q-btn
         flat
-        color="primary"
+        :class="`bg-gradient-to-b from-gray-200 to-gray-50 rounded-xl shadow-xl w-full ${
+          index == 0 ? 'text-blue-500' : index == 1 ? 'text-red-500' : ''
+        }`"
         :to="`/course/${stream.cId}/modules/${stream.mId}/lessons/${stream.lId}`"
       >
-        continue learning <q-icon name="arrow_right_alt" size="10" />
+        Continue
+        <q-icon name="arrow_right_alt" size="20" class="" />
       </q-btn>
     </q-card-actions>
-    <q-card-actions align="right" v-else-if="enroll">
-      <q-btn flat color="primary" :to="`/course/${course.cId}`">
-        start course <q-icon name="arrow_right_alt" size="10" />
+    <q-card-actions
+      align="right"
+      v-else-if="enroll && enroll.status == 'Not Paid'"
+    >
+      <q-btn
+        flat
+        color="blue"
+        :to="`/course/${course.cId}/enroll`"
+        class="bg-gradient-to-b from-gray-200 to-gray-50 text-gray-900 rounded-xl shadow-xl w-full"
+      >
+        complete enroll
+        <q-icon name="arrow_right_alt" size="20" class="" />
+      </q-btn>
+    </q-card-actions>
+    <q-card-actions
+      align="right"
+      v-else-if="enroll && enroll.status !== 'Not Paid'"
+    >
+      <q-btn
+        flat
+        color="blue"
+        :to="`/course/${course.cId}`"
+        class="bg-gradient-to-b from-gray-200 to-gray-50 text-gray-900 rounded-xl shadow-xl w-full"
+      >
+        start course
+        <q-icon name="arrow_right_alt" size="20" class="" />
       </q-btn>
     </q-card-actions>
     <q-card-actions align="right" v-else>
-      <q-btn flat color="primary" :to="`/course/${course.cId}`">
-        view <q-icon name="arrow_right_alt" size="10" />
+      <q-btn
+        flat
+        color="blue"
+        :to="`/course/${course.cId}`"
+        class="bg-gradient-to-b from-gray-200 to-gray-50 text-gray-900 rounded-xl shadow-xl w-full"
+      >
+        view
+        <q-icon name="arrow_right_alt" size="20" class="" />
       </q-btn>
     </q-card-actions>
   </q-card>
 </template>
 <script>
-import { computed } from "@vue/runtime-core";
+import { computed, onBeforeMount, onMounted, ref, toRef } from "vue";
 import { useStore } from "vuex";
-
+import jwtInterceptor from "src/helpers/jwtInterceptor";
 export default {
-  props: ["course", "enroll", "stream"],
-  setup() {
+  props: ["course", "enroll", "stream", "index"],
+  setup(props) {
+    let course = toRef(props, "course");
     const store = useStore();
     let cloudinary = computed(() => store.getters["auth/getCloudinaryURL"]);
+    let expiry = ref("");
+
+    const fetchData = async () => {
+      expiry.value = await jwtInterceptor
+        .get(`/api/course/${course.value.cId}`)
+        .then((res) => {
+          return res.data.data.expires;
+        })
+        .catch((err) => {
+          return null;
+        });
+    };
+    onBeforeMount(async () => {
+      await fetchData();
+    });
+    onMounted(async () => {
+      await fetchData();
+    });
     return {
       cloudinary,
+      expiry,
     };
   },
 };

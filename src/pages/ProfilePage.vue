@@ -1,8 +1,8 @@
 <template>
-  <q-page class="tw-p-5">
+  <q-page class="p-5">
     <router-view />
-    <div class="flex tw-max-w-xl">
-      <q-card class="tw-w-full" flat bordered>
+    <div class="flex max-w-xl font-fredoka">
+      <q-card class="w-full" flat bordered>
         <q-item>
           <q-item-section avatar>
             <q-avatar>
@@ -17,7 +17,7 @@
         </q-item>
         <q-btn
           fab
-          color="primary"
+          color="accent"
           icon="edit"
           class="absolute"
           style="top: 12px; right: 12px; transform: translateY(-50%)"
@@ -45,20 +45,29 @@
                 <q-item-label>{{ editValues.sSchool }}</q-item-label>
               </q-item-section>
             </q-item>
+            <q-item clickable v-ripple>
+              <q-item-section>
+                <q-item-label caption>Mobile</q-item-label>
+                <q-item-label>{{ editValues.sMobile }}</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple>
+              <q-item-section>
+                <q-item-label caption>DOB</q-item-label>
+                <q-item-label>{{ editValues.sDOB }}</q-item-label>
+              </q-item-section>
+            </q-item>
           </q-list>
         </q-card-section>
       </q-card>
     </div>
     <div class="">
       <q-dialog v-model="editPrompt">
-        <q-card class="tw-p-5">
+        <q-card class="p-5">
           <div class="">
             <div>Edit Student</div>
           </div>
-          <q-form
-            class="tw-flex tw-flex-col tw-gap-3"
-            @submit="handleEditSubmit"
-          >
+          <q-form class="flex flex-col gap-3" @submit="handleEditSubmit">
             <div class="">
               <q-item>
                 <q-item-section avatar>
@@ -154,8 +163,8 @@
               disable
             />
             <q-card-actions align="right">
-              <q-btn flat label="Cancel" color="primary" v-close-popup />
-              <q-btn label="Confirm" color="red" type="submit"
+              <q-btn flat label="Cancel" color="accent" v-close-popup />
+              <q-btn label="Confirm" color="accent" type="submit"
                 ><q-spinner-ios v-if="loading" color="white" size="1em"
               /></q-btn>
             </q-card-actions>
@@ -166,7 +175,7 @@
   </q-page>
 </template>
 <script>
-import { computed, onMounted, ref } from "@vue/runtime-core";
+import { computed, onMounted, ref } from "vue";
 import { useStore } from "vuex";
 export default {
   setup() {

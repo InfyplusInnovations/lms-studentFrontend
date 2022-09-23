@@ -2,17 +2,17 @@
   <q-page>
     <router-view />
 
-    <div class="">
-      <div class="tw-h-1/3 tw-p-5">
-        <div class="tw-p-3">
-          <div class="tw-font-medium tw-text-xl tw-py-5">
+    <div class="" v-if="modules && course">
+      <div class="h-1/3 p-5">
+        <div class="p-3">
+          <div class="font-medium text-xl py-5">
             Modules in {{ course.cName }}
           </div>
-          <div class="flex tw-gap-3 tw-text-white">
+          <div class="flex gap-3 text-white">
             <div
               v-for="(module, index) in modules"
               :key="index"
-              class="tw-max-w-md tw-w-full"
+              class="max-w-md w-full"
             >
               <Module :module="module" :active-order="activeOrder" />
             </div>
@@ -23,7 +23,7 @@
   </q-page>
 </template>
 <script>
-import { computed, onMounted } from "@vue/runtime-core";
+import { computed, onBeforeUpdate, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import Module from "../../../components/Module.vue";
@@ -40,27 +40,39 @@ export default {
     let lastActiveLesson = computed(
       () => store.getters["streamStatus/getLatestStreamByCourse"]
     );
-
-    onMounted(async () => {
+    const fetchData = async () => {
       await store.dispatch("course/fetchCourse", route.params.cId);
       await store.dispatch("module/fetchModules", { cId: route.params.cId });
       await store.dispatch("streamStatus/fetchLatestStreamByCourse", {
         cId: route.params.cId,
       });
+    };
+    onBeforeUpdate(async () => {
+      await fetchData();
+    });
+    onMounted(async () => {
+      await fetchData();
     });
 
     let activeOrder = computed(() => {
       if (lastActiveLesson.value !== undefined) {
-        let order = 0;
-        modules.value.forEach((module) => {
+        let order = modules.value[0].order;
+        modules.value.forEach((module, index) => {
           // if streamstatus completed &&
           if (module.mId == lastActiveLesson.value.mId) {
+            console.log(lastActiveLesson.value);
+            if (
+              lastActiveLesson.value.completed &&
+              index < modules.value.length
+            ) {
+              order = modules.value[index + 1].order;
+            }
             order = module.order;
           }
         });
         return order;
       }
-      return 0;
+      return modules.value[0].order;
     });
     return {
       course,

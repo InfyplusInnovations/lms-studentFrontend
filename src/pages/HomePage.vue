@@ -1,41 +1,49 @@
 <template>
-  <q-page class="tw-flex tw-flex-col tw-p-5"
+  <q-page class="flex flex-col p-5"
     ><router-view />
-    <div class="">
-      <div class="tw-flex">
+    <div class="font-fredoka">
+      <div class="font-medium text-xl">Continue</div>
+      <div class="flex py-3">
         <div class="" v-if="stream !== null">
           <CourseCard
             v-if="courseDetails !== null"
             :course="courseDetails"
             :enroll="null"
             :stream="stream"
+            :index="0"
           />
         </div>
-        <div class="tw-flex tw-justify-center tw-items-center" v-else>
+        <div class="flex justify-center items-center" v-else>
           No Streaming History
         </div>
       </div>
       <q-separator color="gray" spaced />
       <div class="">
-        <div class="tw-font-medium tw-text-xl">Enrolled Courses</div>
+        <div class="font-medium text-xl">Enrolled Courses</div>
         <div class="" v-if="enrolled.length > 0">
-          <div
-            class="tw-py-5 tw-flex tw-flex-wrap"
-            v-for="(cEnrolled, index) in enrolledCourses"
-            :key="index"
-          >
-            <CourseCard
-              :course="cEnrolled"
-              :enroll="enrolled"
-              :stream="stream"
-            />
+          <div class="py-5 flex gap-3 flex-wrap">
+            <div
+              class=""
+              v-for="(cEnrolled, index) in enrolledCourses"
+              :key="index"
+            >
+              <div class="" v-for="(enroll, eIndex) in enrolled" :key="eIndex">
+                <CourseCard
+                  v-if="enroll.cId == cEnrolled.cId"
+                  :course="cEnrolled"
+                  :enroll="enroll"
+                  :stream="stream"
+                  :index="index"
+                />
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="tw-flex tw-justify-center tw-items-center" v-else>
+        <div class="flex justify-center items-center" v-else>
           No Course Enrolled
           <div class="">
-            <q-btn to="/course" unelevated class="tw-bg-none tw-text-blue-700"
+            <q-btn to="/courses" unelevated class="bg-none text-blue-700"
               >Explore Courses</q-btn
             >
           </div>
@@ -46,8 +54,9 @@
 </template>
 
 <script>
-import { computed, onBeforeUpdate, onMounted } from "@vue/runtime-core";
+import { computed, onBeforeUpdate, onMounted } from "vue";
 import { useStore } from "vuex";
+import { useQuasar } from "quasar";
 import CourseCard from "src/components/CourseCard.vue";
 export default {
   setup() {
@@ -71,6 +80,7 @@ export default {
     onMounted(async () => {
       await fetchData();
     });
+
     return {
       courseDetails,
       enrolled,

@@ -1,7 +1,7 @@
 <template>
-  <div class="tw-my-3">
+  <div class="my-3" v-if="videoLink">
     <vue-plyr
-      class="player tw-max-h-96"
+      class="player max-h-96"
       ref="plyr"
       @ended="handleVideoEnd"
       @pause="handleVideoPause"
@@ -13,8 +13,8 @@
   </div>
 </template>
 <script>
-import { ref, toRef } from "@vue/reactivity";
-import { onBeforeUpdate, onMounted } from "@vue/runtime-core";
+import { ref, toRef } from "vue";
+import { onBeforeUnmount, onBeforeUpdate, onMounted, onUnmounted } from "vue";
 import moment from "moment";
 import Hls from "hls.js";
 // REQUIRED PROPS
@@ -26,17 +26,42 @@ export default {
   emits: ["ended", "videoPause"],
   setup(props, ctx) {
     let plyr = ref(null);
-    const setupVideo = (videoLink, Poster) => {
+    const setupVideo = (videoLink, Poster, destroy = false) => {
       if (Hls.isSupported() && videoLink.value !== undefined) {
-        const hls = new Hls();
-        hls.loadSource(
-          `https://vz-f26417eb-c20.b-cdn.net/${videoLink.value}/playlist.m3u8`
-        );
-        hls.autoLevelCapping = 1;
+        const hls = new Hls({
+          maxBufferSize: 3 * 1000 * 1000,
+        });
 
-        hls.attachMedia(plyr.value.player.media);
+        if (destroy == false) {
+          console.log(plyr.value.player);
+          hls.attachMedia(plyr.value.player.media);
+          hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+            console.log("player and media are now attached");
+            hls.loadSource(
+              `https://vz-f26417eb-c20.b-cdn.net/${videoLink.value}/playlist.m3u8`
+            );
+            hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+              console.log(
+                "manifest loaded, found " +
+                  data.levels.length +
+                  " quality level"
+              );
+              console.log(hls.levels);
+            });
+          });
 
-        window.hls = hls;
+          hls.autoLevelCapping = 1;
+
+          window.hls = hls;
+        }
+        if (destroy == true) {
+          hls.destroy();
+          plyr.value.player.pause();
+          hls.stopLoad();
+          hls.detachMedia();
+          hls.destroy();
+          plyr.value.player.destroy();
+        }
       }
       if (Poster.value !== undefined && plyr.value !== null) {
         plyr.value.player.poster = Poster.value;
@@ -50,6 +75,10 @@ export default {
     });
     onMounted(() => {
       setupVideo(videoLink, posterLink);
+    });
+    onBeforeUnmount(() => {
+      console.log("unmount");
+      setupVideo(videoLink, posterLink, true);
     });
     const handleVideoEnd = () => {
       ctx.emit("ended");

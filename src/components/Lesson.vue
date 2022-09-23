@@ -1,16 +1,16 @@
 <template>
   <div class="">
     <q-card
-      :class="`${
+      :class="`bg-gradient-to-b rounded-xl ${
         lesson.order > activeOrder
-          ? ''
+          ? 'from-gray-500 to-gray-700 '
           : lesson.order < activeOrder
-          ? 'bg-primary'
-          : 'bg-dark'
-      } tw-w-full`"
+          ? 'from-green-400 to-green-700 text-white'
+          : 'from-yellow-500 to-yellow-700 text-white'
+      } w-full`"
     >
       <q-card-section>
-        <div class="tw-flex tw-gap-2">
+        <div class="flex items-center gap-2">
           <q-icon
             :name="
               lesson.order == activeOrder
@@ -19,9 +19,7 @@
                 ? 'check'
                 : 'lock'
             "
-            :class="
-              lesson.order <= activeOrder ? 'tw-text-white' : 'tw-text-black'
-            "
+            :class="'text-white'"
             size="20px"
           />
           <router-link
@@ -30,12 +28,8 @@
                 ? `/course/${cId}/modules/${mId}/lessons/${lesson.lId}`
                 : ''
             "
-            class="tw-no-underline"
-            ><div
-              :class="`${
-                lesson.order <= activeOrder ? `tw-text-white ` : 'tw-text-black'
-              } tw-w-full`"
-            >
+            class="no-underline"
+            ><div :class="`text-white w-full`">
               {{ lesson.lName }}
             </div></router-link
           >

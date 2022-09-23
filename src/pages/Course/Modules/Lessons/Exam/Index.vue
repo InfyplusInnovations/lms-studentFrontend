@@ -2,28 +2,28 @@
   <q-page>
     <router-view />
     <div
-      class="tw-flex tw-flex-col tw-justify-center tw-items-center tw-p-5"
+      class="flex flex-col justify-center items-center p-5"
       v-if="examStatus.examStart == false && examStatus.examEnd == false"
     >
-      <div class="tw-max-w-7xl tw-w-full">
+      <div class="max-w-7xl w-full">
         <div class="">
-          <div class="tw-py-5 tw-flex tw-justify-between tw-w-full">
-            <div class="tw-font-bold tw-text-lg">
+          <div class="py-5 flex justify-between w-full">
+            <div class="font-bold text-lg">
               <span>Module {{ exam.mId }}</span
               >:<span>Exam{{ exam.exId }}</span>
             </div>
-            <div class="tw-font-bold tw-text-lg">
+            <div class="font-bold text-lg">
               Time:
-              <span class="text-primary">
+              <span class="text-accent">
                 {{ Math.floor(exam.time / 60) }} :
                 {{ Math.floor(exam.time % 60) }}
               </span>
             </div>
           </div>
-          <p class="text-left tw-w-full">Answer all questions</p>
+          <p class="text-left w-full">Answer all questions</p>
         </div>
         <q-separator spaced />
-        <div class="flex tw-w-full tw-justify-end">
+        <div class="flex w-full justify-end">
           <div class="">
             <!-- <q-btn
               v-if="examLog !== null"
@@ -31,15 +31,15 @@
               rounded
               color="primary"
               label="Continue Exam"
-              class="tw-capitalize"
+              class="capitalize"
               @click="handleExamContinue"
             /> -->
             <q-btn
               unelevated
               rounded
-              color="primary"
+              color="accent"
               label="Start Exam"
-              class="tw-capitalize"
+              class="capitalize"
               @click="handleExamStart"
             />
           </div>
@@ -47,68 +47,72 @@
       </div>
     </div>
     <div
-      class="tw-p-5 tw-flex tw-flex-col tw-justify-center tw-items-center tw-relative"
+      class="p-5 flex flex-col justify-center items-center relative"
       v-if="examStatus.examStart == true && examStatus.examEnd == false"
     >
-      <div class="tw-py-5 tw-flex tw-justify-between tw-w-full">
-        <div class="tw-font-bold tw-text-lg">
+      <div class="py-5 flex justify-between w-full">
+        <div class="font-bold text-lg">
           <span>Module {{ exam.mId }}</span
           >:<span>Exam{{ exam.exId }}</span>
         </div>
-        <div class="tw-font-bold tw-text-lg">
+        <div class="font-bold text-lg">
           Time Left:
-          <span class="text-primary">
+          <span class="text-accent">
             {{ Math.floor(timer / 60) }} : {{ Math.floor(timer % 60) }}
           </span>
         </div>
       </div>
-      <div class="tw-max-w-6xl tw-p-3 tw-w-full">
-        <div class="tw-font-bold tw-text-md tw-py-5">
+      <div class="max-w-6xl p-3 w-full">
+        <div class="font-bold text-md py-5">
           Question {{ examIndex + 1 }} of {{ questions.length }}
         </div>
         <q-separator />
-        <div class="tw-font-bold tw-text-lg tw-py-5">
+        <div class="font-bold text-lg py-5">
           {{ questions[examIndex].question }}
         </div>
-        <div class="flex tw-gap-5">
-          <q-card class="tw-max-w-md tw-w-full">
+        <div class="flex gap-5">
+          <q-card class="max-w-md w-full">
             <q-card-section>
               <q-radio
                 v-model="answerOption"
                 checked-icon="task_alt"
+                color="accent"
                 unchecked-icon="panorama_fish_eye"
                 :val="questions[examIndex].option1"
                 :label="questions[examIndex].option1"
               />
             </q-card-section>
           </q-card>
-          <q-card class="tw-max-w-md tw-w-full">
+          <q-card class="max-w-md w-full">
             <q-card-section>
               <q-radio
                 v-model="answerOption"
                 checked-icon="task_alt"
+                color="accent"
                 unchecked-icon="panorama_fish_eye"
                 :val="questions[examIndex].option2"
                 :label="questions[examIndex].option2"
               />
             </q-card-section>
           </q-card>
-          <q-card class="tw-max-w-md tw-w-full">
+          <q-card class="max-w-md w-full">
             <q-card-section>
               <q-radio
                 v-model="answerOption"
                 checked-icon="task_alt"
+                color="accent"
                 unchecked-icon="panorama_fish_eye"
                 :val="questions[examIndex].option3"
                 :label="questions[examIndex].option3"
               />
             </q-card-section>
           </q-card>
-          <q-card class="tw-max-w-md tw-w-full">
+          <q-card class="max-w-md w-full">
             <q-card-section>
               <q-radio
                 v-model="answerOption"
                 checked-icon="task_alt"
+                color="accent"
                 unchecked-icon="panorama_fish_eye"
                 :val="questions[examIndex].option4"
                 :label="questions[examIndex].option4"
@@ -119,14 +123,14 @@
       </div>
 
       <q-separator horizontal />
-      <div class="flex tw-w-full tw-justify-end">
+      <div class="flex w-full justify-end">
         <div class="">
           <q-btn
             unelevated
             rounded
-            color="primary"
+            color="accent"
             label="Next"
-            class="tw-capitalize"
+            class="capitalize"
             @click="handleExamNext"
             v-if="examIndex + 1 < questions.length"
             :disable="answerOption == '' ? true : false"
@@ -134,9 +138,9 @@
           <q-btn
             unelevated
             rounded
-            color="primary"
+            color="accent"
             label="Finish"
-            class="tw-capitalize"
+            class="capitalize"
             v-else
             @click="handleExamEnd"
             :disable="answerOption == '' ? true : false"
@@ -146,19 +150,19 @@
           <q-btn
             unelevated
             rounded
-            color="primary"
+            color="accent"
             label="Previous"
-            class="tw-capitalize"
+            class="capitalize"
             @click="handleExamPrevious"
             :disable="examIndex - 1 < 0"
           />
         </div>
       </div>
       <div
-        class="tw-absolute tw-w-full tw-h-full tw-flex tw-justify-center tw-items-center"
+        class="absolute w-full h-full flex justify-center items-center"
         v-if="timer === 0"
       >
-        <q-banner inline-actions class="text-white bg-red tw-max-w-sm">
+        <q-banner inline-actions class="text-white bg-red max-w-sm">
           Time Up !
           <template v-slot:action>
             <q-btn flat color="white" label="Ok" @click="handleExamEnd" />
@@ -166,91 +170,88 @@
         </q-banner>
       </div>
     </div>
-    <div class="tw-p-5 tw-flex tw-flex-col tw-justify-center tw-items-center">
+    <div class="p-5 flex flex-col justify-center items-center">
       <div
-        class="tw-max-w-6xl tw-w-full"
+        class="max-w-6xl w-full"
         v-if="examStatus.examStart == false && examStatus.examEnd == true"
       >
-        <div class="tw-font-bold tw-text-lg tw-py-5">Result</div>
-        <div class="p-3 tw-bg-gray-300">
-          <q-card class="tw-flex tw-flex-col tw-justify-center tw-items-center">
-            <q-card-section class="tw-w-full">
-              <div class="tw-flex tw-justify-between tw-w-full tw-p-3">
+        <div class="font-bold text-lg py-5">Result</div>
+        <div class="p-3 bg-gray-300">
+          <q-card class="flex flex-col justify-center items-center">
+            <q-card-section class="w-full">
+              <div class="flex justify-between w-full p-3">
                 <div class="">
-                  <q-icon
-                    name="task_alt"
-                    size="32px"
-                    class="tw-text-green-500"
-                  />
+                  <q-icon name="task_alt" size="32px" class="text-green-500" />
                   <div class="">Right Answers</div>
                 </div>
-                <div class="tw-font-bold">{{ examResult.right }}</div>
+                <div class="font-bold">{{ examResult.right }}</div>
               </div>
             </q-card-section>
             <q-separator />
-            <q-card-section class="tw-w-full">
-              <div class="tw-flex tw-justify-between tw-w-full tw-p-3">
+            <q-card-section class="w-full">
+              <div class="flex justify-between w-full p-3">
                 <div class="">
-                  <q-icon name="close" size="32px" class="tw-text-red-500" />
+                  <q-icon name="close" size="32px" class="text-red-500" />
                   <div class="">Wrong Answers</div>
                 </div>
 
                 <div class="">
-                  <div class="tw-font-bold">{{ examResult.wrong }}</div>
+                  <div class="font-bold">{{ examResult.wrong }}</div>
                 </div>
               </div>
             </q-card-section>
             <q-separator />
-            <q-card-section class="tw-w-full">
-              <div class="tw-flex tw-justify-between tw-w-full tw-p-3">
+            <q-card-section class="w-full">
+              <div class="flex justify-between w-full p-3">
                 <div class="">
-                  <q-icon name="note" size="32px" class="tw-text-blue-500" />
+                  <q-icon name="note" size="32px" class="text-blue-500" />
                   <div class="">Mark</div>
                 </div>
-                <div class="tw-font-bold">
+                <div class="font-bold">
                   {{ examResult.right }}/{{ examResult.total }}
                 </div>
               </div>
             </q-card-section>
-            <q-card-section class="tw-w-full">
-              <div class="tw-flex tw-justify-between tw-w-full tw-p-3">
+            <q-card-section class="w-full">
+              <div class="flex justify-between w-full p-3">
                 <div class="">
                   <q-icon
                     name="military_tech"
                     size="32px"
-                    class="tw-text-yellow-500"
+                    class="text-yellow-500"
                   />
                   <div class="">Status</div>
                 </div>
                 <div class="">
                   <div
-                    class="tw-font-bold tw-text-green-500 tw-text-xl"
+                    class="font-bold text-green-500 text-xl"
                     v-if="examResult.passed"
                   >
                     Passed ({{ examResult.percent }} %)
                   </div>
-                  <div class="tw-font-bold tw-text-red-500 tw-text-xl" v-else>
+                  <div class="font-bold text-red-500 text-xl" v-else>
                     Failed ({{ examResult.percent }} %)
                   </div>
                 </div>
               </div>
-              <div class="tw-flex tw-justify-between tw-items-center tw-my-5">
+              <div class="flex justify-between items-center my-5">
                 <q-btn
                   unelevated
                   rounded
-                  color="primary"
+                  color="accent"
                   label="Retry"
                   icon="refresh"
-                  class="tw-capitalize"
+                  class="capitalize"
                   @click="handleExamRetry"
                 />
                 <q-btn
                   unelevated
                   rounded
-                  color="primary"
+                  color="accent"
                   @click="handleNext"
+                  :disable="examResult.passed != true"
                   :label="nextBtn.name"
-                  class="tw-capitalize"
+                  class="capitalize"
                 >
                 </q-btn>
               </div>
@@ -262,9 +263,9 @@
   </q-page>
 </template>
 <script>
-import { ref } from "@vue/reactivity";
+import { ref } from "vue";
 import { useStore } from "vuex";
-import { computed, onMounted } from "@vue/runtime-core";
+import { computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 export default {
   setup() {

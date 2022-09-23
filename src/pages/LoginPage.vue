@@ -2,80 +2,94 @@
   <q-layout>
     <!-- this is where the Pages are injected -->
     <q-page class="q-py-none">
-      <div class="tw-h-screen flex">
-        <div class="bg-primary md:tw-block tw-hidden md:tw-w-1/2 tw-w-full">
-          <div class="md:tw-flex tw-justify-center tw-items-center tw-h-full">
-            <img src="/img/login/login.svg" alt="" class="tw-max-w-lg" />
+      <div class="h-screen flex">
+        <div class="bg-primary gt-sm md:w-1/2 w-full">
+          <div class="md:flex justify-center items-center h-full">
+            <img src="/img/login/login.svg" alt="" class="max-w-lg" />
           </div>
         </div>
         <div
-          class="bg-white tw-flex tw-justify-center tw-flex-col tw-items-center md:tw-w-1/2 tw-w-full"
+          class="bg-white flex justify-center flex-col items-center md:w-1/2 w-full"
         >
-          <div class="tw-text-center">
+          <div class="text-center">
             <div class="">
-              <img src="/img/Logo_Dark.png" alt="" class="tw-w-32" />
-              <!-- <div class="text-subtitle1 tw-font-bold text-primary">
+              <img src="/img/logo.svg" alt="" class="w-48" />
+              <!-- <div class="text-subtitle1 font-bold text-primary">
                 Marengo
               </div> -->
             </div>
             <div class="">
-              <div class="tw-py-5 tw-font-bold tw-text-xl">Student Login</div>
+              <div class="py-5 font-bold text-xl">Student Login</div>
             </div>
           </div>
-          <div class="tw-p-3">
+          <div class="p-3">
             <q-banner
               inline-actions
               class="text-white bg-red"
-              v-if="error"
+              v-if="error && error.error == true"
               animated
             >
-              {{ resmsg }}
+              <div class="" v-if="error.msg !== ''">
+                {{ error.msg }}
+              </div>
+            </q-banner>
+            <q-banner
+              inline-actions
+              class="text-white bg-red"
+              v-if="success == true"
+              animated
+            >
+              <div class="" v-if="error.msg !== ''">
+                {{ error.msg }}
+              </div>
             </q-banner>
           </div>
           <form
-            class="q-gutter-y-md tw-flex tw-flex-col tw-justify-center tw-items-center"
+            class="q-gutter-y-md flex flex-col justify-center items-center"
             @submit.prevent="handleFormSubmit"
           >
-            <q-banner
-              inline-actions
-              class="text-white bg-red"
-              v-if="error"
-              animated
-            >
-              Invalid credentials
-            </q-banner>
             <q-input
               rounded
+              color="black"
               outlined
               v-model="username"
               required
               label="Username"
+              placeholder="Enter username"
               dense
+              class="text-gray-900"
             />
             <q-input
               rounded
+              color="black"
               outlined
               v-model="password"
               required
               label="Password"
+              placeholder="Enter password"
               dense
               type="password"
-              class=""
+              class="text-gray-900"
             />
+            <div class="ml-auto text-accent">
+              <router-link to="/forgot" class="font-bold text-accent"
+                >Forgot password?</router-link
+              >
+            </div>
             <q-btn
               unelevated
               rounded
-              color="primary"
+              color="accent"
               label="Login"
-              class="tw-block tw-w-full"
+              class="block w-full"
               type="submit"
             >
               <q-spinner-ios v-if="loading" color="white" size="1em"
             /></q-btn>
           </form>
-          <div class="tw-p-3 text-primary">
+          <div class="p-3 text-accent">
             No account? create a new account by
-            <router-link to="/register" class="tw-font-bold"
+            <router-link to="/register" class="font-bold text-accent"
               >Registering</router-link
             >
           </div>
@@ -85,19 +99,22 @@
   </q-layout>
 </template>
 <script>
-import { ref } from "@vue/reactivity";
+import { onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
-import { computed } from "@vue/runtime-core";
+import { computed } from "vue";
 export default {
-  name: "Login",
   setup() {
     let username = ref("");
     let password = ref("");
     let loading = ref(false);
-    let error = computed(() => store.getters["auth/getError"]);
+    let error = computed(() => store.getters["auth/getResponseStatus"]);
+    let success = ref(false);
     const store = useStore();
     const router = useRouter();
+    onMounted(async () => {
+      await store.dispatch("auth/resetError");
+    });
     const handleFormSubmit = async () => {
       loading.value = true;
       let payload = {
@@ -109,6 +126,7 @@ export default {
       loading.value = false;
 
       if (res === true) {
+        success.value = error.value.error;
         router.push("/");
       }
     };
@@ -119,6 +137,7 @@ export default {
       password,
       loading,
       error,
+      success,
     };
   },
 };
