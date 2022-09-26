@@ -17,7 +17,7 @@
     "@unocss/preset-icons": "^0.45.22",
     "@unocss/preset-web-fonts": "^0.45.22",
     "@unocss/preset-wind": "^0.45.22",
-    "axios": "^0.21.1",
+    "axios": "^0.27.2",
     "dotenv": "^16.0.2",
     "hls.js": "^1.2.3",
     "moment": "^2.29.4",
