@@ -72,17 +72,20 @@
           />
 
           <q-breadcrumbs-el>
-            <q-btn color="" flat class="text-gray-900" icon="menu">
+            <q-btn color="" flat class="text-gray-900" icon="menu_open">
               <q-menu auto-close v-if="bdLinkNames && breadCrumbs">
                 <q-list
                   style="min-width: 100px"
-                  v-if="bdLinkMenuItems && bdLinkMenuItems.length > 0"
+                  v-if="
+                    bdLinkMenuItems.items && bdLinkMenuItems.items.length > 0
+                  "
                 >
                   <q-item
                     clickable
-                    v-for="(item, index) in bdLinkMenuItems"
+                    v-for="(item, index) in bdLinkMenuItems.items"
                     :key="index"
                     :to="item.link"
+                    class="border-b-1 border-gray-300"
                   >
                     <q-item-section avatar>
                       <q-icon
@@ -94,7 +97,7 @@
                             ? 'menu_book'
                             : index == 0
                             ? 'book'
-                            : 'radio_button_unchecked'
+                            : 'chevron_right'
                         "
                       />
                     </q-item-section>
@@ -105,7 +108,9 @@
             </q-btn>
           </q-breadcrumbs-el>
           <q-breadcrumbs-el
-            :label="$route.path.split('/')[$route.path.split('/').length - 1]"
+            v-if="bdLinkMenuItems.last"
+            :label="bdLinkMenuItems.last.text"
+            class="text-orange-600"
           >
           </q-breadcrumbs-el>
         </q-breadcrumbs>
@@ -239,62 +244,70 @@ export default {
     });
     // ITEM GENERATOR
 
-    let links = route.path.split("/");
+    // let links = route.path.split("/");
     let bds = route.meta.breadcrumbs;
     let params = Object.keys(route.params);
     let bdLinkMenuItems = computed(() => {
-      let items = [];
+      let items = { items: [], last: { text: "", link: "" } };
       let counter = 0;
-      bds.links.forEach((link, index) => {
-        if (index + 1 !== bds.links.length) {
-          if (link == "paramId") {
-            if (params[counter] == "lId") {
-              if (lesson.value !== null && lesson.value !== undefined) {
-                items.push({
-                  text: lesson.value.lName,
-                  link: `/course/${route.params.cId}/modules/${route.params.mId}/lessons/${route.params.lId}`,
-                });
-              }
-            }
-            if (params[counter] == "mId") {
-              if (module.value !== null && module.value !== undefined) {
-                items.push({
-                  text: module.value.mName,
-                  link: `/course/${route.params.cId}/modules/${route.params.mId}`,
-                });
-              }
-            }
-            if (params[counter] == "cId") {
-              if (course.value !== null && course.value !== undefined) {
-                // console.log(links[index + 1]);
-                items.push({
-                  text: course.value.cName,
-                  link: `/course/${route.params.cId}`,
-                });
-              }
-            }
-            if (params[counter] == "catId") {
-              if (category.value !== null && category.value !== undefined) {
-                items.push({
-                  text: category.value.catName,
-                  link: `/courses/${route.params.catId}`,
-                });
-              }
-            }
-            counter += 1;
-          } else {
-            let rPath = "";
-            route.path.split("/").forEach((path, i) => {
-              if (i <= index + 1) {
-                rPath += i > 0 ? "/" : "";
-                rPath = rPath + path;
-              }
-            });
 
-            items.push({ text: link, link: rPath });
+      bds.links.forEach((link, index) => {
+        let newItem = null;
+        if (link == "paramId") {
+          if (params[counter] == "lId") {
+            if (lesson.value !== null && lesson.value !== undefined) {
+              newItem = {
+                text: lesson.value.lName,
+                link: `/course/${route.params.cId}/modules/${route.params.mId}/lessons/${route.params.lId}`,
+              };
+            }
+          }
+          if (params[counter] == "mId") {
+            if (module.value !== null && module.value !== undefined) {
+              newItem = {
+                text: module.value.mName,
+                link: `/course/${route.params.cId}/modules/${route.params.mId}`,
+              };
+            }
+          }
+          if (params[counter] == "cId") {
+            if (course.value !== null && course.value !== undefined) {
+              newItem = {
+                text: course.value.cName,
+                link: `/course/${route.params.cId}`,
+              };
+            }
+          }
+          if (params[counter] == "catId") {
+            if (category.value !== null && category.value !== undefined) {
+              newItem = {
+                text: category.value.catName,
+                link: `/courses/${route.params.catId}`,
+              };
+            }
+          }
+          counter += 1;
+        } else {
+          let rPath = "";
+          route.path.split("/").forEach((path, i) => {
+            if (i <= index + 1) {
+              rPath += i > 0 ? "/" : "";
+              rPath = rPath + path;
+            }
+          });
+          newItem = { text: link, link: rPath };
+        }
+        if (index + 1 !== bds.links.length) {
+          if (newItem !== null) {
+            items.items.push(newItem);
           }
         } else {
-          console.log(params[counter]);
+          // last link
+          if (link == "paramId") {
+            items.last = newItem;
+          } else {
+            items.last = newItem;
+          }
         }
       });
 
@@ -378,7 +391,6 @@ export default {
       { name: "Support", link: "/support", icon: "support_agent" },
     ];
 
-    console.log(bdLinkMenuItems.value);
     return {
       leftDrawerOpen,
       toggleLeftDrawer() {
