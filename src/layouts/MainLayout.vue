@@ -5,13 +5,27 @@
         <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title class="font-fredoka">
-          <!-- <q-avatar>
-            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
-          </q-avatar> -->
           {{ $route.meta.title }}
         </q-toolbar-title>
+        <q-space />
+        <q-btn flat>
+          <q-icon name="bell" size="24px" />
+        </q-btn>
+        <q-item
+          v-if="pic !== undefined && profile.sName !== undefined"
+          clickable
+          class="flex flex-col justify-center items-center"
+          to="/profile"
+        >
+          <q-avatar>
+            <q-img :src="pic" />
+          </q-avatar>
+          <div class="font-fredoka font-bold text-gray-800">
+            {{ profile.sName }}
+          </div>
+        </q-item>
       </q-toolbar>
-      <q-toolbar inset>
+      <!-- <q-toolbar>
         <q-breadcrumbs class="flex flex-wrap font-fredoka text-lg">
           <q-breadcrumbs-el
             icon="home"
@@ -23,10 +37,77 @@
             v-for="(sRoute, index) in breadCrumbs"
             :to="sRoute"
             :key="index"
-            :label="bdLinkNames[index]"
+            :label="$route.path.split('/')[index + 1]"
+            class="text-gray-900"
+          >
+          </q-breadcrumbs-el>
+        </q-breadcrumbs>
+      </q-toolbar> -->
+      <q-toolbar>
+        <q-breadcrumbs
+          class="flex flex-wrap font-fredoka text-lg"
+          v-if="$route.path.split('/').length < 4"
+        >
+          <q-breadcrumbs-el
+            icon="home"
+            to="/"
+            label="home"
             class="text-gray-900"
           />
-          <!-- :label="$route.path.split('/')[index + 1]" -->
+          <q-breadcrumbs-el
+            v-for="(sRoute, index) in breadCrumbs"
+            :to="sRoute"
+            :key="index"
+            :label="$route.path.split('/')[index + 1]"
+            class="text-gray-900"
+          >
+          </q-breadcrumbs-el>
+        </q-breadcrumbs>
+        <q-breadcrumbs v-else class="flex flex-wrap font-fredoka text-lg">
+          <q-breadcrumbs-el
+            icon="home"
+            to="/"
+            label="home"
+            class="text-gray-900"
+          />
+
+          <q-breadcrumbs-el>
+            <q-btn color="" flat class="text-gray-900" icon="menu">
+              <q-menu auto-close v-if="bdLinkNames && breadCrumbs">
+                <q-list
+                  style="min-width: 100px"
+                  v-if="bdLinkMenuItems && bdLinkMenuItems.length > 0"
+                >
+                  <q-item
+                    clickable
+                    v-for="(item, index) in bdLinkMenuItems"
+                    :key="index"
+                    :to="item.link"
+                  >
+                    <q-item-section avatar>
+                      <q-icon
+                        color="black"
+                        :name="
+                          index == 4
+                            ? 'play_arrow'
+                            : index == 2
+                            ? 'menu_book'
+                            : index == 0
+                            ? 'book'
+                            : 'radio_button_unchecked'
+                        "
+                      />
+                    </q-item-section>
+                    <q-item-section>{{ item.text }}</q-item-section>
+                  </q-item>
+                </q-list>
+              </q-menu>
+            </q-btn>
+          </q-breadcrumbs-el>
+          <q-breadcrumbs-el
+            :label="$route.path.split('/')[$route.path.split('/').length - 1]"
+          >
+          </q-breadcrumbs-el>
         </q-breadcrumbs>
       </q-toolbar>
     </q-header>
@@ -93,7 +174,7 @@
   </q-layout>
 </template>
 <script>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import Navlink from "src/components/NavLink.vue";
@@ -104,10 +185,122 @@ export default {
     const store = useStore();
     const router = useRouter();
     const route = useRoute();
+    let pic = ref("");
     const handleLogout = async () => {
       await store.dispatch("auth/logoutApi");
       router.push("/login");
     };
+    let profile = computed(() => {
+      return store.getters["profile/getUser"];
+    });
+
+    let cloudinary = computed(() => store.getters["auth/getCloudinaryURL"]);
+    let lesson = computed(() => store.getters["item/getLesson"]);
+    let module = computed(() => store.getters["item/getModule"]);
+    let course = computed(() => store.getters["item/getCourse"]);
+    let category = computed(() => store.getters["item/getCategory"]);
+    const fetchData = async () => {
+      let params = Object.keys(route.params);
+      if (params && params.length > 0) {
+        params.forEach(async (param) => {
+          if (param == "cId") {
+            await store.dispatch("item/fetchCourse", {
+              cId: route.params.cId,
+            });
+          }
+          if (param == "mId") {
+            await store.dispatch("item/fetchModule", {
+              cId: route.params.cId,
+              mId: route.params.mId,
+            });
+          }
+          if (param == "lId") {
+            await store.dispatch("item/fetchLesson", {
+              cId: route.params.cId,
+              mId: route.params.mId,
+              lId: route.params.lId,
+            });
+          }
+          if (param == "catId") {
+            await store.dispatch("item/fetchCategory", {
+              catId: route.params.catId,
+            });
+          }
+        });
+      }
+    };
+    onMounted(async () => {
+      await fetchData();
+      await store.dispatch("profile/fetchUser");
+      pic.value =
+        profile.value.sProfilePic != ""
+          ? `${cloudinary.value}${profile.value.sProfilePic}`
+          : `${cloudinary.value}image/upload/v1664085802/jxfxvt5e4jepoj5rcek9.jpg`;
+    });
+    // ITEM GENERATOR
+
+    let links = route.path.split("/");
+    let bds = route.meta.breadcrumbs;
+    let params = Object.keys(route.params);
+    let bdLinkMenuItems = computed(() => {
+      let items = [];
+      let counter = 0;
+      bds.links.forEach((link, index) => {
+        if (index + 1 !== bds.links.length) {
+          if (link == "paramId") {
+            if (params[counter] == "lId") {
+              if (lesson.value !== null && lesson.value !== undefined) {
+                items.push({
+                  text: lesson.value.lName,
+                  link: `/course/${route.params.cId}/modules/${route.params.mId}/lessons/${route.params.lId}`,
+                });
+              }
+            }
+            if (params[counter] == "mId") {
+              if (module.value !== null && module.value !== undefined) {
+                items.push({
+                  text: module.value.mName,
+                  link: `/course/${route.params.cId}/modules/${route.params.mId}`,
+                });
+              }
+            }
+            if (params[counter] == "cId") {
+              if (course.value !== null && course.value !== undefined) {
+                // console.log(links[index + 1]);
+                items.push({
+                  text: course.value.cName,
+                  link: `/course/${route.params.cId}`,
+                });
+              }
+            }
+            if (params[counter] == "catId") {
+              if (category.value !== null && category.value !== undefined) {
+                items.push({
+                  text: category.value.catName,
+                  link: `/courses/${route.params.catId}`,
+                });
+              }
+            }
+            counter += 1;
+          } else {
+            let rPath = "";
+            route.path.split("/").forEach((path, i) => {
+              if (i <= index + 1) {
+                rPath += i > 0 ? "/" : "";
+                rPath = rPath + path;
+              }
+            });
+
+            items.push({ text: link, link: rPath });
+          }
+        } else {
+          console.log(params[counter]);
+        }
+      });
+
+      return items;
+    });
+    // ITEM GENERATOR END
     const generateBreadcrumbLinks = (rParams, rLinks) => {
       // course/{cid}/modules/{mid}
       let params = rParams;
@@ -184,6 +377,8 @@ export default {
       { name: "Profile", link: "/profile", icon: "person" },
       { name: "Support", link: "/support", icon: "support_agent" },
     ];
+
+    console.log(bdLinkMenuItems.value);
     return {
       leftDrawerOpen,
       toggleLeftDrawer() {
@@ -193,6 +388,9 @@ export default {
       breadCrumbs,
       bdLinkNames,
       navItems,
+      pic,
+      profile,
+      bdLinkMenuItems,
     };
   },
 };

@@ -10,6 +10,9 @@ import profile from "./modules/profile";
 import category from "./modules/category";
 import syllabus from "./modules/syllabus";
 import payment from "./modules/payment";
+import note from "./modules/note";
+import forgot from "./modules/forgot";
+import item from "./modules/item";
 const store = createStore({
   modules: {
     auth: authModule,
@@ -23,6 +26,9 @@ const store = createStore({
     category,
     syllabus,
     payment,
+    note,
+    forgot,
+    item,
   },
 });
 

@@ -15,7 +15,6 @@
               :key="index"
             >
               <Lesson
-                :activeOrder="activeOrder"
                 :lesson="lesson"
                 :cId="$route.params.cId"
                 :mId="$route.params.mId"
@@ -52,11 +51,11 @@ export default {
     let lessons = computed(() => store.getters["lesson/getLessons"]);
 
     let lastActiveLesson = computed(
-      () => store.getters["streamStatus/getLatestStreamByCourse"]
+      () => store.getters["streamStatus/getLatestStreamByCompleted"]
     );
 
     onMounted(async () => {
-      await store.dispatch("course/fetchCourse", route.params.cId);
+      await store.dispatch("course/fetchCourse", route.params.mId);
       await store.dispatch("module/fetchModule", {
         cId: route.params.cId,
         mId: route.params.mId,
@@ -65,34 +64,33 @@ export default {
         cId: route.params.cId,
         mId: route.params.mId,
       });
-      await store.dispatch("streamStatus/fetchLatestStreamByCourse", {
+      await store.dispatch("streamStatus/fetchLatestStreamByComplete", {
         cId: route.params.cId,
       });
     });
 
-    let activeOrder = computed(() => {
-      let order = 0;
-      if (lastActiveLesson.value !== undefined) {
-        lessons.value.forEach((lesson, index) => {
-          // if streamstatus completed &&
-          if (lesson.lId == lastActiveLesson.value.lId) {
-            let lindex = index + 1;
+    // let activeOrder = computed(() => {
+    //   let order = 0;
+    //   if (lastActiveLesson.value !== undefined) {
+    //     lessons.value.forEach((lesson, index) => {
+    //       // if streamstatus completed &&
+    //       if (lesson.lId == lastActiveLesson.value.lId) {
+    //         let lindex = index + 1;
 
-            if (lindex < lessons.value.length) {
-              order = lessons.value[index + 1].order;
-            } else {
-              order = lesson.order;
-            }
-          }
-        });
-      }
-      return order;
-    });
+    //         if (lindex < lessons.value.length) {
+    //           order = lessons.value[index + 1].order;
+    //         } else {
+    //           order = lesson.order;
+    //         }
+    //       }
+    //     });
+    //   }
+    //   return order;
+    // });
 
     return {
       module,
       lessons,
-      activeOrder,
     };
   },
   components: { Lesson },

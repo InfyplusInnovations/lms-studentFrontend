@@ -4,7 +4,7 @@
     <div class="p-3">
       <div class="" v-if="pageLoad">
         <div class="">
-          <div class="" v-if="lesson.videoId == undefined">
+          <div class="" v-if="lesson && lesson.purchased != true">
             <h4>Purchase the full course to view this lesson</h4>
             <q-btn
               :to="`/course/${$route.params.cId}`"
@@ -17,17 +17,27 @@
 
           <div
             class="py-5 flex justify-center items-start flex-wrap"
-            v-else-if="lessonStatus === true"
+            v-else-if="lesson && lesson.unlocked === true"
           >
             <div class="w-full bg-gray-300 flex justify-center items-center">
               <div class="md:max-w-3xl w-full">
-                <VideoComp
+                <!-- <VideoComp
                   v-if="lesson.videoId"
                   :videoLink="lesson.videoId"
                   :poster="`${cloudinary}${lesson.lThumbnail}`"
                   :seekTime="lessonStream"
                   @ended="handleVideoEnd"
                   @videoPause="handlePause"
+                /> -->
+                <ArtplayerVue
+                  v-if="lesson.videoId"
+                  :videoLink="lesson.videoId"
+                  :poster="`${cloudinary}${lesson.lThumbnail}`"
+                  :seekTime="lessonStream"
+                  @ended="handleVideoEnd"
+                  @videoPause="handlePause"
+                  class="md:h-90 h-56 w-full md:min-w-xl"
+                  :title="lesson.lName"
                 />
               </div>
             </div>
@@ -51,7 +61,7 @@
             </div>
           </div>
           <div class="p-5" v-else>
-            <h4>You Havent Unlocked this Lesson Yet!{{ lessonStatus }}</h4>
+            <h4>You Havent Unlocked this Lesson Yet!</h4>
             <q-btn to="/" class="bg-accent text-white" rounded flat>home</q-btn>
           </div>
         </div>
@@ -66,9 +76,16 @@
             narrow-indicator
           >
             <q-tab name="Details" icon="info" label="Details" />
-
-            <q-tab name="Comments" icon="comment" label="Comments" />
-            <q-tab name="Notes" icon="note" label="Notes" />
+            <!--
+            <q-tab name="Comments" icon="comment" label="Comments" /> -->
+            <q-tab name="Notes" icon="note" label="Notes">
+              <q-badge
+                color="accent"
+                floating
+                v-if="notes && notes.length > 0"
+                >{{ notes.length }}</q-badge
+              >
+            </q-tab>
           </q-tabs>
           <q-separator horizontal />
           <q-tab-panels v-model="tab" animated>
@@ -77,13 +94,60 @@
               {{ lesson.lDescription }}
             </q-tab-panel>
 
-            <q-tab-panel name="Comments">
+            <!-- <q-tab-panel name="Comments">
               <div class="text-h6">All Comments</div>
               Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            </q-tab-panel>
+            </q-tab-panel> -->
             <q-tab-panel name="Notes">
               <div class="text-h6">Notes</div>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              <div
+                class="flex flex-col gap-3"
+                v-if="notes && notes.length > 0 && lesson.unlocked === true"
+              >
+                <div v-for="(note, index) in notes" :key="index">
+                  <q-card
+                    class="flex flex-row justify-between items-center max-w-lg w-full cursor-pointer"
+                  >
+                    <q-card-section
+                      class="font-bold font-fredoka text-lg text-gray-800"
+                    >
+                      <q-icon color="blue" name="picture_as_pdf" size="34px" />
+                      <div class="">
+                        {{ lesson.lName }} Note {{ index + 1 }}
+                      </div>
+                    </q-card-section>
+                    <q-card-actions class="flex gap-2">
+                      <a
+                        :href="`${cloudinary}${note.file}`"
+                        target="_blank"
+                        :download="`${lesson.lName}-Note-${index + 1}.pdf`"
+                        class="no-underline gt-sm"
+                      >
+                        <q-btn
+                          color="blue"
+                          icon-right="visibility"
+                          label="view"
+                        />
+                      </a>
+
+                      <q-btn
+                        color="accent"
+                        icon-right="download"
+                        label="download"
+                        @click="
+                          () => {
+                            downloadFile(
+                              `${cloudinary}${note.file}`,
+                              `${lesson.lName}-Note-${index + 1}.pdf`
+                            );
+                          }
+                        "
+                      />
+                    </q-card-actions>
+                  </q-card>
+                </div>
+              </div>
+              <div class="" v-else>No Notes for this lesson</div>
             </q-tab-panel>
           </q-tab-panels>
         </div>
@@ -104,6 +168,7 @@ import {
 import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import VideoComp from "src/components/VideoComp.vue";
+import ArtplayerVue from "src/components/Artplayer.vue";
 export default {
   setup() {
     const route = useRoute();
@@ -116,24 +181,25 @@ export default {
     let lessons = computed(() => store.getters["lesson/getLessons"]);
     let exams = computed(() => store.getters["exam/getExams"]);
     let lesson = computed(() => store.getters["lesson/getLesson"]);
-    let lastActiveLesson = computed(
-      () => store.getters["streamStatus/getLatestStreamByCourse"]
-    );
-    let lastActiveLessonData = computed(
-      () => store.getters["lesson/getTempLesson"]
-    );
+    // let lastActiveLesson = computed(
+    //   () => store.getters["streamStatus/getLatestStreamByCompleted"]
+    // );
+    // let lastActiveLessonData = computed(
+    //   () => store.getters["lesson/getTempLesson"]
+    // );
     let lessonStream = computed(
       () => store.getters["streamStatus/getLessonStream"]
     );
     let pageLoad = ref(false);
     let cloudinary = computed(() => store.getters["auth/getCloudinaryURL"]);
+    let notes = computed(() => store.getters["note/getNotes"]);
     const fetchData = async () => {
       await store.dispatch("course/fetchCourse", route.params.cId);
       await store.dispatch("module/fetchModule", {
         cId: route.params.cId,
         mId: route.params.mId,
       });
-      await store.dispatch("streamStatus/fetchLatestStreamByCourse", {
+      await store.dispatch("streamStatus/fetchLatestStreamByComplete", {
         cId: route.params.cId,
       });
       await store.dispatch("lesson/fetchLesson", {
@@ -149,13 +215,13 @@ export default {
         cId: route.params.cId,
       });
 
-      if (lastActiveLesson.value.lId !== undefined) {
-        await store.dispatch("lesson/fetchTempLesson", {
-          cId: route.params.cId,
-          mId: route.params.mId,
-          lId: lastActiveLesson.value.lId,
-        });
-      }
+      // if (lastActiveLesson.value.lId !== undefined) {
+      //   await store.dispatch("lesson/fetchTempLesson", {
+      //     cId: route.params.cId,
+      //     mId: route.params.mId,
+      //     lId: lastActiveLesson.value.lId,
+      //   });
+      // }
       await store.dispatch("lesson/fetchLessons", {
         cId: route.params.cId,
         mId: route.params.mId,
@@ -173,6 +239,24 @@ export default {
     onMounted(async () => {
       await fetchData();
       pageLoad.value = true;
+      if (lesson.value && lesson.value.unlocked == true) {
+        await store.dispatch("note/fetchNotes", { lId: route.params.lId });
+      }
+      if (
+        lessonStream.value == null &&
+        lesson.value &&
+        lesson.value.unlocked == true
+      ) {
+        await store.dispatch("streamStatus/addStream", {
+          lId: route.params.lId,
+          cId: route.params.cId,
+          mId: route.params.mId,
+          time: 0,
+        });
+        await store.dispatch("streamStatus/fetchSteamByLesson", {
+          lId: route.params.lId,
+        });
+      }
     });
 
     let nextBtn = computed(() => {
@@ -191,7 +275,10 @@ export default {
             }
           });
         } else {
-          if (modules.value.length > 0) {
+          if (
+            modules.value.length > 0 &&
+            modules.value[modules.value.length - 1].mId != route.params.mId
+          ) {
             if (
               modules.value[modules.value.length - 1].mId !== route.params.mId
             ) {
@@ -217,41 +304,10 @@ export default {
       }
       return btnValue;
     });
-    const addStream = async () => {
-      if (lessonStream.value == null) {
-        await store.dispatch("streamStatus/addStream", {
-          lId: route.params.lId,
-          cId: route.params.cId,
-          mId: route.params.mId,
-          time: 0,
-        });
-      }
-    };
-    let lessonStatus = computed(() => {
-      let status = false;
-      if (lastActiveLesson.value) {
-        // we get the last latest completed lesson status belonging to current course fetchTempLesson
-        if (lastActiveLessonData.value.mId == lesson.value.mId) {
-          if (lesson.value.order > lastActiveLessonData.value.order) {
-            lessons.value.forEach((lsn, index) => {
-              if (lsn.lId == lastActiveLessonData.value.lId) {
-                if (lessons.value[index + 1].lId == lesson.value.lId) {
-                  status = true;
-                }
-              }
-            });
-          } else {
-            status = true;
-          }
-        } else {
-          status = true;
-        }
-      }
-      return status;
-    });
 
     let handlePause = async (time) => {
       await store.dispatch("streamStatus/updateStream", {
+        strId: lessonStream.value.id,
         lId: route.params.lId,
         cId: route.params.cId,
         mId: route.params.mId,
@@ -260,6 +316,14 @@ export default {
     };
     const handleVideoEnd = async () => {
       nextActive.value = true;
+      await store.dispatch("streamStatus/updateStream", {
+        strId: lessonStream.value.id,
+        lId: route.params.lId,
+        cId: route.params.cId,
+        mId: route.params.mId,
+        time: lesson.value.lDuration,
+        completed: true,
+      });
     };
     const handleNext = async () => {
       if (
@@ -268,6 +332,7 @@ export default {
         nextBtn.value == "Finish Course"
       ) {
         await store.dispatch("streamStatus/updateStream", {
+          strId: lessonStream.value.id,
           lId: route.params.lId,
           cId: route.params.cId,
           mId: route.params.mId,
@@ -277,11 +342,19 @@ export default {
       }
       router.push(nextBtn.value.to);
     };
-    if (lessonStatus.value == true && lessonStream.value == null) {
-      addStream();
-    }
+    const downloadFile = async (url, filename) => {
+      let blob = await fetch(url).then((r) => r.blob());
+      if (blob) {
+        var a = document.createElement("a");
+        a.href = window.URL.createObjectURL(blob); // xhr.response is a blob
+        a.download = filename.replace(" ", "-"); // Set the file name.
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+    };
     return {
-      lessonStatus,
       lesson,
       tab: ref("Details"),
       handleVideoEnd,
@@ -292,8 +365,10 @@ export default {
       handleNext,
       nextActive,
       lessonStream,
+      notes,
+      downloadFile,
     };
   },
-  components: { VideoComp },
+  components: { VideoComp, ArtplayerVue },
 };
 </script>

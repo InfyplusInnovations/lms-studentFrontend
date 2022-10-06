@@ -2,7 +2,7 @@
   <q-page>
     <router-view />
 
-    <div class="">
+    <div class="" v-if="pageLoad == true">
       <div class="h-2/3 p-5 overflow-y-auto">
         <div class="p-5" v-if="course">
           <div class="font-medium text-xl py-5">
@@ -68,7 +68,6 @@
               :key="index"
             >
               <Lesson
-                :activeOrder="activeOrder"
                 :lesson="lesson"
                 :cId="$route.params.cId"
                 :mId="$route.params.mId"
@@ -78,10 +77,11 @@
         </div>
       </div>
     </div>
+    <div class="p-5" v-else>Loading...</div>
   </q-page>
 </template>
 <script>
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import Lesson from "src/components/Lesson.vue";
@@ -92,7 +92,7 @@ export default {
     const store = useStore();
 
     const route = useRoute();
-
+    let pageLoad = ref(false);
     let course = computed(() => store.getters["course/getCourse"]);
     let module = computed(() => store.getters["module/getModule"]);
     let lessons = computed(() => store.getters["lesson/getLessons"]);
@@ -114,33 +114,35 @@ export default {
       await store.dispatch("streamStatus/fetchLatestStreamByCourse", {
         cId: route.params.cId,
       });
+      pageLoad.value = true;
     });
 
-    let activeOrder = computed(() => {
-      let order = lessons.value[0].order;
-      if (lastActiveLesson.value !== undefined) {
-        lessons.value.forEach((lesson, index) => {
-          // if streamstatus completed &&
-          if (lesson.lId == lastActiveLesson.value.lId) {
-            let lindex = index + 1;
+    // let activeOrder = computed(() => {
+    //   let order = lessons.value[0].order;
+    //   if (lastActiveLesson.value !== undefined) {
+    //     lessons.value.forEach((lesson, index) => {
+    //       // if streamstatus completed &&
+    //       if (lesson.lId == lastActiveLesson.value.lId) {
+    //         let lindex = index + 1;
 
-            if (lindex < lessons.value.length) {
-              order = lessons.value[index + 1].order;
-            } else {
-              order = lesson.order;
-            }
-          }
-        });
-      }
-      return order;
-    });
+    //         if (lindex < lessons.value.length) {
+    //           order = lessons.value[index + 1].order;
+    //         } else {
+    //           order = lesson.order;
+    //         }
+    //       }
+    //     });
+    //   }
+    //   return order;
+    // });
 
     return {
       course,
       module,
       lessons,
-      activeOrder,
+
       cloudinary,
+      pageLoad,
     };
   },
 };

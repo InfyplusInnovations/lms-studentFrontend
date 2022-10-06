@@ -18,11 +18,17 @@
     >
       expires in {{ expiry }}
     </div>
-    <q-card-section class="h-48 overflow-hidden">
+    <q-card-section class="h-48 overflow-hidden relative">
       <q-img
         :src="`${cloudinary}${course.cThumbnail}`"
         class="rounded-xl h-full"
       />
+      <div
+        class="w-54 absolute bottom-0 left-5"
+        v-if="course.progress && course.progress > 0"
+      >
+        <q-linear-progress :value="course.progress / 100" color="white" />
+      </div>
     </q-card-section>
 
     <q-card-section>
@@ -50,7 +56,7 @@
             : course.cPrice
         }}
       </div>
-      <div class="text-caption text-white text-lg">
+      <div class="text-caption text-white text-lg" v-if="$route.path !== '/'">
         {{
           String(course.cDescription)
             .replace(/<[^>]*>?/gm, "")

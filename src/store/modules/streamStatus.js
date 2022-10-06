@@ -4,6 +4,7 @@ const state = () => ({
   streamStatus: { lId: "", sId: "", mId: "", cId: "", time: "" },
   stream: null,
   streamByCourse: {},
+  streamByComplete: {},
   responseStatus: {
     error: false,
     msg: "",
@@ -25,6 +26,9 @@ const getters = {
   },
   getLatestStreamByCourse(state) {
     return state.streamByCourse;
+  },
+  getLatestStreamByCompleted(state) {
+    return state.streamByComplete;
   },
   getLessonStream(state) {
     return state.lessonStream;
@@ -72,8 +76,8 @@ const actions = {
   async fetchLatestStreamByCourse({ commit }, payload) {
     const response = await jwtInterceptor
       .get(
-        `api/streamStatus/${payload.cId}`,
-        { params: { course: true } },
+        `api/streamStatus`,
+        { params: { course: true, cId: payload.cId } },
         {
           withCredentials: true,
           credentials: "include",
@@ -90,9 +94,30 @@ const actions = {
       return false;
     }
   },
+  async fetchLatestStreamByComplete({ commit }, payload) {
+    const response = await jwtInterceptor
+      .get(
+        `api/streamStatus`,
+        { params: { completed: true, cId: payload.cId } },
+        {
+          withCredentials: true,
+          credentials: "include",
+        }
+      )
+      .catch((err) => {
+        console.log(err);
+      });
+
+    if (response && response.data) {
+      commit("setLatestStreamByComplete", response.data);
+      return true;
+    } else {
+      return false;
+    }
+  },
   async addStream({ commit }, payload) {
     const response = await jwtInterceptor
-      .put(
+      .post(
         `api/streamStatus`,
         payload,
 
@@ -115,7 +140,7 @@ const actions = {
   async updateStream({ commit }, payload) {
     const response = await jwtInterceptor
       .put(
-        `api/streamStatus`,
+        `api/streamStatus/${payload.strId}`,
         payload,
 
         {
@@ -166,6 +191,9 @@ const mutations = {
   },
   setLatestStreamByCourse(state, data) {
     state.streamByCourse = data.data;
+  },
+  setLatestStreamByComplete(state, data) {
+    state.streamByComplete = data.data;
   },
   setResponseStatus(state, data) {
     state.respnoseStatus = data;

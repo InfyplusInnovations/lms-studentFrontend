@@ -2,8 +2,8 @@
   <q-layout>
     <!-- this is where the Pages are injected -->
     <q-page class="q-py-none">
-      <div class="h-screen flex">
-        <div class="bg-primary gt-sm md:w-1/2 w-full">
+      <div class="h-screen flex justify-center items-center">
+        <div class="bg-primary gt-sm md:w-1/2 w-full h-full">
           <div class="md:flex justify-center items-center h-full">
             <img src="/img/login/login.svg" alt="" class="max-w-lg" />
           </div>
@@ -57,7 +57,7 @@
               label="Username"
               placeholder="Enter username"
               dense
-              class="text-gray-900"
+              class="text-gray-900 max-w-md w-full"
             />
             <q-input
               rounded
@@ -68,11 +68,19 @@
               label="Password"
               placeholder="Enter password"
               dense
-              type="password"
-              class="text-gray-900"
-            />
+              :type="isPwd ? 'password' : 'text'"
+              class="text-gray-900 max-w-md w-full"
+            >
+              <template v-slot:append>
+                <q-icon
+                  :name="isPwd ? 'visibility_off' : 'visibility'"
+                  class="cursor-pointer"
+                  @click="isPwd = !isPwd"
+                />
+              </template>
+            </q-input>
             <div class="ml-auto text-accent">
-              <router-link to="/forgot" class="font-bold text-accent"
+              <router-link to="/reset" class="font-bold text-accent"
                 >Forgot password?</router-link
               >
             </div>
@@ -87,12 +95,12 @@
               <q-spinner-ios v-if="loading" color="white" size="1em"
             /></q-btn>
           </form>
-          <div class="p-3 text-accent">
+          <!-- <div class="p-3 text-accent">
             No account? create a new account by
             <router-link to="/register" class="font-bold text-accent"
               >Registering</router-link
             >
-          </div>
+          </div> -->
         </div>
       </div>
     </q-page>
@@ -133,6 +141,7 @@ export default {
 
     return {
       handleFormSubmit,
+      isPwd: ref(true),
       username,
       password,
       loading,

@@ -25,11 +25,17 @@
           >
             <q-card-section class="flex gap-3 flex-wrap md:flex-row flex-col">
               <div class="rounded-xl overflow-hidden">
-                <VideoComp
+                <!-- <VideoComp
+                  v-if="course.cPreview"
+                  :videoLink="course.cPreview"
+                  class="max-w-md"
+                  :poster="`${cloudinary}${course.cThumbnail}`"
+                /> -->
+                <ArtplayerVue
+                  class="w-78 h-56 rounded-xl"
                   v-if="course.cPreview"
                   :videoLink="course.cPreview"
                   :poster="`${cloudinary}${course.cThumbnail}`"
-                  class="max-w-md"
                 />
               </div>
               <div class="">
@@ -45,7 +51,7 @@
               </div>
             </q-card-section>
             <q-card-section class="">
-              <q-card-actions align="right">
+              <q-card-actions align="right" class="flex gap-2 flex-wrap">
                 <q-btn
                   color="accent"
                   :to="`/course/${course.cId}/enroll`"
@@ -73,11 +79,6 @@
                   rounded
                   :to="`/course/${course.cId}/syllabus`"
                   class="bg-white text-blue-400"
-                  v-if="
-                    enrollStatus.status != true ||
-                    enrollStatus.payment == 'Not Paid' ||
-                    enrollStatus.payment == 'Cancelled'
-                  "
                 >
                   View Syllabus <q-icon name="arrow_right_alt"></q-icon>
                 </q-btn>
@@ -104,7 +105,7 @@
               v-for="(module, index) in modules"
               :key="index"
             >
-              <Module :activeOrder="activeOrder" :module="module" />
+              <Module :module="module" />
             </div>
           </div>
         </div>
@@ -132,8 +133,9 @@ import { useStore } from "vuex";
 
 import Module from "../../components/Module.vue";
 import VideoComp from "src/components/VideoComp.vue";
+import ArtplayerVue from "src/components/Artplayer.vue";
 export default {
-  components: { Module, VideoComp },
+  components: { Module, VideoComp, ArtplayerVue },
   setup() {
     const store = useStore();
 
@@ -163,24 +165,24 @@ export default {
       await fetchData();
     });
 
-    let activeOrder = computed(() => {
-      if (lastActiveLesson.value !== undefined) {
-        let order = modules.value[0].order;
-        modules.value.forEach((module) => {
-          // if streamstatus completed &&
-          if (module.mId == lastActiveLesson.value.mId) {
-            order = module.order;
-          }
-        });
-        return order;
-      }
-      return modules.value[0].order;
-    });
+    // let activeOrder = computed(() => {
+    //   if (lastActiveLesson.value !== undefined) {
+    //     let order = modules.value[0].order;
+    //     modules.value.forEach((module) => {
+    //       // if streamstatus completed &&
+    //       if (module.mId == lastActiveLesson.value.mId) {
+    //         order = module.order;
+    //       }
+    //     });
+    //     return order;
+    //   }
+    //   return modules.value[0].order;
+    // });
     return {
       course,
       enrollStatus,
       modules,
-      activeOrder,
+
       cloudinary,
     };
   },

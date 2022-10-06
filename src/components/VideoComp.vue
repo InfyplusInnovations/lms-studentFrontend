@@ -1,7 +1,7 @@
 <template>
   <div class="my-3" v-if="videoLink">
     <vue-plyr
-      class="player max-h-96"
+      class="player"
       ref="plyr"
       @ended="handleVideoEnd"
       @pause="handleVideoPause"

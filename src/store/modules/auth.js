@@ -71,6 +71,8 @@ const actions = {
         commit("setLoginApiStatus", true);
         commit("setJWTToken", response.data.token);
         commit("setResponseStatus", { error: false, msg: "success" });
+        localStorage.setItem("login", true);
+        commit("setLoginApiStatus", localStorage.getItem("login"));
         return true;
       }
     } else {
@@ -107,15 +109,20 @@ const actions = {
         withCredentials: true,
         credentials: "include",
       })
-      .then((res) => {
-        commit("setError", false);
-        localStorage.setItem("login", false);
-        commit("setLoginApiStatus", localStorage.getItem("login"));
-      })
+
       .catch((err) => {
         console.log(err);
       });
-    return false;
+    if (response && response.data) {
+      commit("setError", false);
+      localStorage.setItem("login", false);
+      commit("setLoginApiStatus", localStorage.getItem("login"));
+      return true;
+    } else {
+      localStorage.setItem("login", false);
+      commit("setLoginApiStatus", localStorage.getItem("login"));
+      return false;
+    }
   },
   async registerNewUser({ commit, state }, payload) {
     commit("setResponseStatus", { error: false, msg: "" });

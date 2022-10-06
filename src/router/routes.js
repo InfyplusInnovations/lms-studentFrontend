@@ -140,7 +140,7 @@ const routes = [
       { path: "", component: () => import("pages/Course/Syllabus.vue") },
     ],
     meta: {
-      title: "Course Syllubus",
+      title: "Course Syllabus",
       auth: true,
       breadcrumbs: {
         links: ["course", "paramId", "syllabus"],
@@ -172,6 +172,26 @@ const routes = [
       },
     },
     name: "enroll",
+    beforeEnter: authGaurd,
+  },
+  {
+    path: "/course/:cId/finish",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      { path: "", component: () => import("pages/Course/Finish.vue") },
+    ],
+    meta: {
+      title: "Finish",
+      auth: true,
+      breadcrumbs: {
+        links: ["course", "paramId", "finish"],
+        params: ["cId"],
+        paramNameGetter: [
+          { getter: "course/getCourseById", nameAttr: "cName" },
+        ],
+      },
+    },
+    name: "finish",
     beforeEnter: authGaurd,
   },
   {
@@ -313,18 +333,32 @@ const routes = [
     beforeEnter: authGaurd,
   },
   {
-    path: "/forgot",
-    component: () => import("pages/ForgotPage.vue"),
+    path: "/reset",
+    component: () => import("pages/forgotPassword/index.vue"),
     meta: {
-      title: "Forgot",
+      title: "rest",
       auth: true,
       breadcrumbs: {
-        links: ["forgot"],
+        links: ["reset"],
         params: [],
         paramNameGetter: [],
       },
     },
-    name: "forgot",
+    name: "reset",
+  },
+  {
+    path: "/reset/:resetLink",
+    component: () => import("pages/forgotPassword/passwordReset.vue"),
+    meta: {
+      title: "resetPage",
+      auth: true,
+      breadcrumbs: {
+        links: ["resetPage"],
+        params: [],
+        paramNameGetter: [],
+      },
+    },
+    name: "resetPage",
   },
   {
     path: "/support",

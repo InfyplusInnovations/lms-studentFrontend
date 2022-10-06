@@ -2,18 +2,18 @@
   <div class="">
     <q-card
       :class="`bg-gradient-to-b rounded-xl  ${
-        module.order > activeOrder
-          ? 'from-gray-500 to-gray-700 '
-          : module.order < activeOrder
+        module.completed == true
           ? 'from-green-400 to-green-700 text-white'
-          : 'from-yellow-500 to-yellow-700 text-white'
+          : module.unlocked == true
+          ? 'from-yellow-500 to-yellow-700 text-white'
+          : 'from-gray-500 to-gray-700 '
       } w-full`"
     >
       <q-card-section>
         <div class="">
           <router-link
             :to="
-              module.order <= activeOrder
+              module.completed == true || module.unlocked == true
                 ? `/course/${module.cId}/modules/${module.mId}`
                 : ''
             "
@@ -21,10 +21,10 @@
           >
             <q-icon
               :name="
-                module.order == activeOrder
-                  ? 'play_arrow'
-                  : module.order < activeOrder
+                module.completed == true
                   ? 'check'
+                  : module.unlocked == true
+                  ? 'play_arrow'
                   : 'lock'
               "
               :class="`text-white block`"
@@ -42,7 +42,7 @@
 </template>
 <script>
 export default {
-  props: ["module", "activeOrder"],
+  props: ["module"],
   setup(props) {},
 };
 </script>

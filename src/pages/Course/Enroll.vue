@@ -23,8 +23,8 @@
                 <span class="font-bold text-xl"> Enroll to the course</span>
 
                 <q-card v-if="course">
-                  <q-card-section horizontal>
-                    <div class="col-5 p-3">
+                  <q-card-section horizontal class="flex gap-2 flex-wrap">
+                    <div class="p-3">
                       <q-img
                         :src="`${cloudinary}${course.cThumbnail}`"
                         class="w-48 rounded-lg"
@@ -113,7 +113,7 @@
                       class="q-ml-sm"
                     />
                     <q-btn
-                      v-if="step > 1 && course.cPrice > 0"
+                      v-if="step > 1 && course.cPrice > 0 && step < 3"
                       flat
                       color="accent"
                       @click="$refs.stepper.previous()"

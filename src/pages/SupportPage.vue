@@ -11,7 +11,7 @@
               <q-icon name="school" size="36px"></q-icon>
             </q-avatar>
             <div class="text-h6">Contact Instructors</div>
-            <div class="text-subtitle2">+91 1234567890</div>
+            <div class="text-subtitle2">+91 8089003100</div>
           </q-card-section>
         </q-card>
         <q-card class="p-10" flat bordered>
@@ -22,7 +22,8 @@
               <q-icon name="support" size="36px" class=""></q-icon>
             </q-avatar>
             <div class="text-h6">Contact Support</div>
-            <div class="text-subtitle2">+91 1234567890</div>
+            <div class="text-subtitle2">+91 8089010060</div>
+            <div class="text-subtitle2">support@marengoedutech.com</div>
           </q-card-section>
         </q-card>
       </div>

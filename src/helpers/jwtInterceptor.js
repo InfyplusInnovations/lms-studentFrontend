@@ -5,15 +5,16 @@ let baseURL = `${process.env.SERVER_NAME}`;
 
 const jwtInterceptor = axios.create({
   baseURL: baseURL,
+  withCredentials: true,
+  credentials: "include",
 });
 
 // Set auth header for requests
 jwtInterceptor.interceptors.request.use((config) => {
-  const authData = store.getters["auth/getJWT"];
+  let authData = store.getters["auth/getJWT"];
   if (authData == null) {
     return config;
   }
-
   config.headers.common["Authorization"] = `TOKEN ${authData}`;
   return config;
 });
@@ -32,14 +33,14 @@ jwtInterceptor.interceptors.response.use(
       // error.config.headers[
       //   "Authorization"
       // ] = `bearer ${response.data.access_token}`;
-      error.config.headers[
-        "Authorization"
-      ] = `bearer ${store.getters["auth/getJWT"]}`;
+      let authData = store.getters["auth/getJWT"];
+
+      error.config.headers["Authorization"] = `TOKEN ${authData}`;
       return axios(error.config);
     } else {
       return Promise.reject(error);
     }
   }
 );
-
+jwtInterceptor.defaults.withCredentials = true;
 export default jwtInterceptor;

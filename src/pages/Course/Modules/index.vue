@@ -2,7 +2,7 @@
   <q-page>
     <router-view />
 
-    <div class="" v-if="modules && course">
+    <div class="" v-if="modules && course && pageLoad == true">
       <div class="h-1/3 p-5">
         <div class="p-3">
           <div class="font-medium text-xl py-5">
@@ -14,16 +14,17 @@
               :key="index"
               class="max-w-md w-full"
             >
-              <Module :module="module" :active-order="activeOrder" />
+              <Module :module="module" />
             </div>
           </div>
         </div>
       </div>
     </div>
+    <div class="p-5" v-else>Loading...</div>
   </q-page>
 </template>
 <script>
-import { computed, onBeforeUpdate, onMounted } from "vue";
+import { computed, onBeforeUpdate, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import Module from "../../../components/Module.vue";
@@ -34,7 +35,7 @@ export default {
     const store = useStore();
 
     const route = useRoute();
-
+    let pageLoad = ref(false);
     let course = computed(() => store.getters["course/getCourse"]);
     let modules = computed(() => store.getters["module/getModules"]);
     let lastActiveLesson = computed(
@@ -52,32 +53,33 @@ export default {
     });
     onMounted(async () => {
       await fetchData();
+      pageLoad.value = true;
     });
 
-    let activeOrder = computed(() => {
-      if (lastActiveLesson.value !== undefined) {
-        let order = modules.value[0].order;
-        modules.value.forEach((module, index) => {
-          // if streamstatus completed &&
-          if (module.mId == lastActiveLesson.value.mId) {
-            console.log(lastActiveLesson.value);
-            if (
-              lastActiveLesson.value.completed &&
-              index < modules.value.length
-            ) {
-              order = modules.value[index + 1].order;
-            }
-            order = module.order;
-          }
-        });
-        return order;
-      }
-      return modules.value[0].order;
-    });
+    // let activeOrder = computed(() => {
+    //   if (lastActiveLesson.value !== undefined) {
+    //     let order = modules.value[0].order;
+    //     modules.value.forEach((module, index) => {
+    //       // if streamstatus completed &&
+    //       if (module.mId == lastActiveLesson.value.mId) {
+    //         if (
+    //           lastActiveLesson.value.completed &&
+    //           index < modules.value.length
+    //         ) {
+    //           order = modules.value[index + 1].order;
+    //         }
+    //         order = module.order;
+    //       }
+    //     });
+    //     return order;
+    //   }
+    //   return modules.value[0].order;
+    // });
     return {
       course,
       modules,
-      activeOrder,
+
+      pageLoad,
     };
   },
 };

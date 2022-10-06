@@ -5,7 +5,7 @@
       <q-card class="w-full" flat bordered>
         <q-item>
           <q-item-section avatar>
-            <q-avatar>
+            <q-avatar size="100px">
               <q-img :src="editValues.sProfilePic" />
             </q-avatar>
           </q-item-section>
@@ -29,12 +29,6 @@
           <q-list bordered separator>
             <q-item clickable v-ripple>
               <q-item-section>
-                <q-item-label caption>Class</q-item-label>
-                <q-item-label>{{ editValues.sClass }}</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item clickable v-ripple>
-              <q-item-section>
                 <q-item-label caption>District</q-item-label>
                 <q-item-label>{{ editValues.sDistrict }}</q-item-label>
               </q-item-section>
@@ -42,6 +36,12 @@
             <q-item clickable v-ripple>
               <q-item-section>
                 <q-item-label caption>Class</q-item-label>
+                <q-item-label>{{ editValues.sClass }}</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple>
+              <q-item-section>
+                <q-item-label caption>School</q-item-label>
                 <q-item-label>{{ editValues.sSchool }}</q-item-label>
               </q-item-section>
             </q-item>
@@ -205,7 +205,10 @@ export default {
       editValues.value.sDistrict = profile.value.sDistrict;
       editValues.value.sMobile = profile.value.sMobile;
       editValues.value.sDOB = profile.value.sDOB;
-      editValues.value.sProfilePic = `${cloudinary.value}${profile.value.sProfilePic}`;
+      editValues.value.sProfilePic =
+        profile.value.sProfilePic != ""
+          ? `${cloudinary.value}${profile.value.sProfilePic}`
+          : `${cloudinary.value}image/upload/v1664085802/jxfxvt5e4jepoj5rcek9.jpg`;
     });
     const handleEditSubmit = async (evt) => {
       let payload = {

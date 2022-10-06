@@ -279,6 +279,9 @@ export default {
       examStart: false,
       examEnd: false,
     });
+    let lessonStream = computed(
+      () => store.getters["streamStatus/getLessonStream"]
+    );
     let modules = computed(() => store.getters["module/getModules"]);
     let lessons = computed(() => store.getters["lesson/getLessons"]);
     let lesson = computed(() => store.getters["lesson/getLesson"]);
@@ -302,6 +305,9 @@ export default {
       });
       await store.dispatch("exam/fetchExam", route.params.exId);
       await store.dispatch("exam/fetchExamLog", route.params.exId);
+      await store.dispatch("streamStatus/fetchSteamByLesson", {
+        lId: route.params.lId,
+      });
       if (examLog.value !== null) {
         await store.dispatch("exam/fetchAnswers", {
           exId: route.params.exId,
@@ -475,6 +481,7 @@ export default {
     // end
     const handleNext = async () => {
       await store.dispatch("streamStatus/updateStream", {
+        strId: lessonStream.value.id,
         lId: route.params.lId,
         cId: route.params.cId,
         mId: route.params.mId,

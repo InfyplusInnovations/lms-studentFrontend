@@ -71,6 +71,7 @@
                     outlined
                     v-model="fullname"
                     label="Fullname"
+                    name="name"
                     placeholder="Enter your Fullname"
                     dense
                     :rules="[(fullname) => !!fullname || 'Field is required']"
@@ -82,8 +83,9 @@
                     rounded
                     outlined
                     v-model="sclass"
-                    label="class"
-                    placeholder="Enter your Class"
+                    name="class"
+                    label="class/Qualification"
+                    placeholder="Enter your Class/Qualification"
                     dense
                     :rules="[(sclass) => !!sclass || 'Field is required']"
                     required
@@ -95,6 +97,7 @@
                     rounded
                     outlined
                     v-model="date"
+                    name="bday"
                     dense
                     required
                     mask="date"
@@ -118,7 +121,7 @@
                             <div class="row items-center justify-end">
                               <q-btn
                                 v-close-popup
-                                label="Close"
+                                label="ok"
                                 color="accent"
                                 flat
                               />
@@ -133,12 +136,15 @@
                     outlined
                     v-model="phone"
                     label="Phone"
+                    name="phone"
                     dense
                     :rules="[(val) => !!val || 'Field is required']"
                     required
                     type="text"
+                    mask="###########"
                     placeholder="Enter your phone"
                     class=""
+                    prefix="+91"
                     color="accent"
                   />
 
@@ -147,6 +153,7 @@
                     outlined
                     v-model="school"
                     label="school"
+                    name="school"
                     dense
                     :rules="[(val) => !!val || 'Field is required']"
                     required
@@ -160,6 +167,7 @@
                     outlined
                     v-model="district"
                     label="district"
+                    name="district"
                     dense
                     :rules="[(val) => !!val || 'Field is required']"
                     required
@@ -181,6 +189,7 @@
                   <q-input
                     rounded
                     outlined
+                    name="username"
                     v-model="username"
                     label="Username"
                     dense
@@ -209,6 +218,7 @@
                     outlined
                     v-model="email"
                     label="Email"
+                    name="email"
                     dense
                     :rules="[(val) => !!val || 'Field is required']"
                     :hint="emailExists == true ? 'Email already exists!' : ''"
@@ -237,16 +247,25 @@
                     dense
                     :rules="[(val) => !!val || 'Field is required']"
                     required
-                    type="password"
                     placeholder="Enter your password"
                     class=""
                     color="accent"
-                  />
+                    :type="isPwd ? 'password' : 'text'"
+                  >
+                    <template v-slot:append>
+                      <q-icon
+                        :name="isPwd ? 'visibility_off' : 'visibility'"
+                        class="cursor-pointer"
+                        @click="isPwd = !isPwd"
+                      />
+                    </template>
+                  </q-input>
                   <q-input
                     rounded
                     outlined
                     v-model="confirmPass"
                     label="confirm password"
+                    name="password"
                     dense
                     required
                     :rules="[
@@ -410,6 +429,7 @@ export default {
       }
     };
     return {
+      isPwd: ref(true),
       handleFormSubmit,
       username,
       password,
@@ -423,6 +443,7 @@ export default {
       error,
       step,
       email,
+
       checkUsername,
       usernameExists,
       checkEmail,

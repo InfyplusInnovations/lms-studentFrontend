@@ -451,6 +451,11 @@
   resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-2.3.4.tgz#966a6279060eb2d9d1a02ea1a331af071afdcf9e"
   integrity sha512-IfFNbtkbIm36O9KB8QodlwwYvTEsJb4Lll4c2IwB3VHc2gie2mSPtSzL0eYay7X2jd/2WX02FjSGTWR6OPr/zg==
 
+"@vitejs/plugin-vue@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-3.1.0.tgz#3a423ea6943a450e806da412a911150e928598ed"
+  integrity sha512-fmxtHPjSOEIRg6vHYDaem+97iwCUg/uSIaTzp98lhELt2ISOQuDo2hbkBdXod0g15IhfPMQmAxh4heUks2zvDA==
+
 "@vue/compiler-core@3.2.39":
   version "3.2.39"
   resolved "https://registry.yarnpkg.com/@vue/compiler-core/-/compiler-core-3.2.39.tgz#0d77e635f4bdb918326669155a2dc977c053943e"
@@ -633,6 +638,14 @@ array-flatten@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/array-flatten/-/array-flatten-1.1.1.tgz#9a5f699051b1e7073328f2a008968b64ea2955d2"
   integrity sha512-PCVAQswWemu6UdxsDFFX/+gVeYqKAod3D3UVm91jHwynguOwAvYPhx8nNlM++NqRcK6CxxpUafjmhIdKiHibqg==
+
+artplayer@^4.5.6:
+  version "4.5.6"
+  resolved "https://registry.yarnpkg.com/artplayer/-/artplayer-4.5.6.tgz#5400591d630b6ba95a76be61ac9e9a26a23a4619"
+  integrity sha512-nYa0+636K/ZmVykuPaZnGE7pUsCvQsWTNHD/ZEv77Yd7TYSK/2jjt4XM3Qj5Law1nFDXupbR1YDW5Dj6CsIexw==
+  dependencies:
+    option-validator "^2.0.6"
+    screenfull "^6.0.2"
 
 astral-regex@^2.0.0:
   version "2.0.0"
@@ -1854,7 +1867,7 @@ jsonfile@^6.0.1:
   optionalDependencies:
     graceful-fs "^4.1.6"
 
-kind-of@^6.0.2:
+kind-of@^6.0.2, kind-of@^6.0.3:
   version "6.0.3"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.3.tgz#07c05034a6c349fa06e24fa35aa76db4580ce4dd"
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
@@ -2159,6 +2172,13 @@ open@^8.4.0:
     define-lazy-prop "^2.0.0"
     is-docker "^2.1.1"
     is-wsl "^2.2.0"
+
+option-validator@^2.0.6:
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/option-validator/-/option-validator-2.0.6.tgz#a314dae65e26db5f948ef0ff96fc88f18bb76ed6"
+  integrity sha512-tmZDan2LRIRQyhUGvkff68/O0R8UmF+Btmiiz0SmSw2ng3CfPZB9wJlIjHpe/MKUZqyIZkVIXCrwr1tIN+0Dzg==
+  dependencies:
+    kind-of "^6.0.3"
 
 ora@^5.4.1:
   version "5.4.1"
@@ -2487,6 +2507,11 @@ sax@1.1.4:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.1.4.tgz#74b6d33c9ae1e001510f179a91168588f1aedaa9"
   integrity sha512-5f3k2PbGGp+YtKJjOItpg3P99IMD84E4HOvcfleTb5joCHNXYLsR9yWFPOYGgaeMPDubQILTCMdsFb2OMeOjtg==
+
+screenfull@^6.0.2:
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/screenfull/-/screenfull-6.0.2.tgz#3dbe4b8c4f8f49fb8e33caa8f69d0bca730ab238"
+  integrity sha512-AQdy8s4WhNvUZ6P8F6PB21tSPIYKniic+Ogx0AacBMjKP1GUHN2E9URxQHtCusiwxudnCKkdy4GrHXPPJSkCCw==
 
 semver@^7.3.5:
   version "7.3.7"
