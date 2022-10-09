@@ -4,13 +4,13 @@
       <q-toolbar>
         <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
 
-        <q-toolbar-title class="font-fredoka">
+        <q-toolbar-title class="font-fredoka" shrink>
           {{ $route.meta.title }}
         </q-toolbar-title>
         <q-space />
-        <q-btn flat>
+        <!-- <q-btn flat>
           <q-icon name="bell" size="24px" />
-        </q-btn>
+        </q-btn> -->
         <q-item
           v-if="pic !== undefined && profile.sName !== undefined"
           clickable
@@ -48,6 +48,9 @@
           class="flex flex-wrap font-fredoka text-lg"
           v-if="$route.path.split('/').length < 4"
         >
+          <template v-slot:separator>
+            <q-icon size="1.2em" name="arrow_forward" color="purple" />
+          </template>
           <q-breadcrumbs-el
             icon="home"
             to="/"
@@ -64,6 +67,9 @@
           </q-breadcrumbs-el>
         </q-breadcrumbs>
         <q-breadcrumbs v-else class="flex flex-wrap font-fredoka text-lg">
+          <template v-slot:separator>
+            <q-icon size="1.2em" name="arrow_forward" color="purple" />
+          </template>
           <q-breadcrumbs-el
             icon="home"
             to="/"
@@ -85,22 +91,18 @@
                     v-for="(item, index) in bdLinkMenuItems.items"
                     :key="index"
                     :to="item.link"
-                    class="border-b-1 border-gray-300"
+                    class="border-b-1 border-gray-300 flex justify-center gap-1 items-center"
                   >
-                    <q-item-section avatar>
-                      <q-icon
-                        color="black"
-                        :name="
-                          index == 4
-                            ? 'play_arrow'
-                            : index == 2
-                            ? 'menu_book'
-                            : index == 0
-                            ? 'book'
-                            : 'chevron_right'
+                    <!-- <q-icon
+                      v-if="index > 0"
+                      color="black"
+                      class="p-1"
+                      size="20px"
+                      name="
+                          subdirectory_arrow_right
                         "
-                      />
-                    </q-item-section>
+                    /> -->
+                    <q-icon size="20px" name="arrow_downward" color="purple" />
                     <q-item-section>{{ item.text }}</q-item-section>
                   </q-item>
                 </q-list>
@@ -257,7 +259,7 @@ export default {
           if (params[counter] == "lId") {
             if (lesson.value !== null && lesson.value !== undefined) {
               newItem = {
-                text: lesson.value.lName,
+                text: `${module.value.order + 1}.  ${lesson.value.lName}`,
                 link: `/course/${route.params.cId}/modules/${route.params.mId}/lessons/${route.params.lId}`,
               };
             }
@@ -265,7 +267,7 @@ export default {
           if (params[counter] == "mId") {
             if (module.value !== null && module.value !== undefined) {
               newItem = {
-                text: module.value.mName,
+                text: `${module.value.order + 1}.  ${module.value.mName}`,
                 link: `/course/${route.params.cId}/modules/${route.params.mId}`,
               };
             }
@@ -295,7 +297,13 @@ export default {
               rPath = rPath + path;
             }
           });
-          newItem = { text: link, link: rPath };
+          newItem = {
+            text:
+              link == "course" || link == "modules" || link == "lessons"
+                ? `All ${link}`
+                : link,
+            link: rPath,
+          };
         }
         if (index + 1 !== bds.links.length) {
           if (newItem !== null) {

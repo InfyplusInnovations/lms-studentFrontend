@@ -398,9 +398,6 @@ export default {
         let res = await store.dispatch("auth/registerNewUser", payload);
         if (res == true) {
           step.value = 3;
-          setTimeout(() => {
-            router.push("/login");
-          }, 1000);
         }
       }
     };

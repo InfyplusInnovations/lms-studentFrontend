@@ -100,7 +100,7 @@ const routes = [
     component: () => import("layouts/MainLayout.vue"),
     children: [{ path: "", component: () => import("pages/Course/Index.vue") }],
     meta: {
-      title: "Course",
+      title: "courses",
       auth: true,
       breadcrumbs: {
         links: ["course", "paramId"],

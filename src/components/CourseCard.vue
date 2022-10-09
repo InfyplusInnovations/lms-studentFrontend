@@ -46,7 +46,7 @@
 
     <q-card-section class="q-pt-none">
       <div class="text-subtitle1 text-white">
-        <q-icon name="paid" class="text-white text-xl" />
+        <q-icon name="currency_rupee" class="text-white text-lg text-center" />
         {{
           (enroll && enroll.status == "Paid") ||
           (enroll && enroll.status == "Free")
