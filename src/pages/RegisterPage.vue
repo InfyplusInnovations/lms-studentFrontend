@@ -162,7 +162,7 @@
                     class=""
                     color="accent"
                   />
-                  <q-input
+                  <!-- <q-input
                     rounded
                     outlined
                     v-model="district"
@@ -175,7 +175,30 @@
                     placeholder="Enter your District"
                     class=""
                     color="accent"
-                  />
+                  /> -->
+                  <q-select
+                    v-model="district"
+                    name="district"
+                    color="accent"
+                    dense
+                    use-input
+                    input-debounce="0"
+                    label="District"
+                    :options="options"
+                    @filter="filterFn"
+                    style="width: 250px"
+                    behavior="menu"
+                    rounded
+                    outlined
+                  >
+                    <template v-slot:no-option>
+                      <q-item>
+                        <q-item-section class="text-grey">
+                          No results
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
                 </div>
               </q-step>
 
@@ -358,6 +381,23 @@ export default {
     let date = ref("");
     let phone = ref("");
     let district = ref("");
+    let districtValues = [
+      "Alappuzha",
+      "Ernakulam",
+      "Idukki",
+      "Kannur",
+      "Kasaragod",
+      "Kollam",
+      "Kottayam",
+      "Kozhikode",
+      "Malappuram",
+      "Palakkad",
+      "Pathanamthitta",
+      "Thiruvananthapuram",
+      "Thrissur",
+      "Wayanad",
+    ];
+
     let school = ref("");
     let error = ref(false);
     let step = ref(1);
@@ -425,7 +465,9 @@ export default {
         setEmailDelay();
       }
     };
+    const options = ref(districtValues);
     return {
+      options,
       isPwd: ref(true),
       handleFormSubmit,
       username,
@@ -440,11 +482,26 @@ export default {
       error,
       step,
       email,
-
+      districtValues,
       checkUsername,
       usernameExists,
       checkEmail,
       emailExists,
+      filterFn(val, update) {
+        if (val === "") {
+          update(() => {
+            options.value = districtValues;
+          });
+          return;
+        }
+
+        update(() => {
+          const needle = val.toLowerCase();
+          options.value = districtValues.filter(
+            (v) => v.toLowerCase().indexOf(needle) > -1
+          );
+        });
+      },
     };
   },
 };

@@ -2,6 +2,11 @@
   <q-page>
     <router-view />
     <div class="flex flex-col p-3">
+      <q-card flat class="bg-accent max-w-3xl text-white font-bold text-lg">
+        <q-card-section>
+          support is only available between 9:00AM to 6:00PM IST
+        </q-card-section>
+      </q-card>
       <div class="flex gap-3 flex-wrap my-10">
         <q-card class="p-10" flat bordered>
           <q-card-section class="text-dark">
@@ -33,23 +38,16 @@
           Frequently Asked Questions
         </div>
         <div class="flex flex-wrap gap-3">
-          <q-expansion-item expand-separator label="Question1" class="w-72">
+          <q-expansion-item
+            expand-separator
+            :label="faq.question"
+            class="w-72 font-bold text-lg"
+            v-for="(faq, index) in faqs"
+            :key="index"
+          >
             <q-card>
-              <q-card-section>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                Quidem, eius reprehenderit eos corrupti commodi magni quaerat ex
-                numquam, dolorum officiis modi facere maiores architecto
-                suscipit iste eveniet doloribus ullam aliquid.
-              </q-card-section>
-            </q-card>
-          </q-expansion-item>
-          <q-expansion-item expand-separator label="Question2" class="w-72">
-            <q-card>
-              <q-card-section>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                Quidem, eius reprehenderit eos corrupti commodi magni quaerat ex
-                numquam, dolorum officiis modi facere maiores architecto
-                suscipit iste eveniet doloribus ullam aliquid.
+              <q-card-section class="text-sm font-normal">
+                {{ faq.answer }}
               </q-card-section>
             </q-card>
           </q-expansion-item>
@@ -58,3 +56,39 @@
     </div>
   </q-page>
 </template>
+<script>
+export default {
+  setup() {
+    let faqs = [
+      {
+        question: "Somethings not working, such as video not playing",
+        answer:
+          "Contact marengo support from the above given number or email id",
+      },
+      {
+        question: "Have doubts in lesson, notes or any course content",
+        answer:
+          "Contact marengo instructor support from the above given number",
+      },
+      {
+        question: "What is abacus?",
+        answer:
+          "Abacus is a calculation tool.It is used to count numbers and do mathematical operations.We can call it world ‘s first calculator.",
+      },
+
+      {
+        question: "Is it possible to study abacus without abacus tool?",
+        answer:
+          "NO.Studying Abacus means practicing Abacus tool initially and after excelling the tool students moves to abacus visualization.Students perform maths without using abacus tool in abacus visualization. ",
+      },
+
+      {
+        question: "What is the age limit for studying Abacus?",
+        answer:
+          "There is no age limit for studying Abacus.Anyone above 5 years of age can start abacus study usually & there is no upper age limit.",
+      },
+    ];
+    return { faqs };
+  },
+};
+</script>
