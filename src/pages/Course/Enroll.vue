@@ -321,10 +321,10 @@ export default {
     };
     const payNow = async (order) => {
       var options = {
-        key: "rzp_test_eEiIp9uBm2Xtc7", // Enter the Key ID generated from the Dashboard
+        key: "rzp_live_5VGb83AeIhzlLZ", // Enter the Key ID generated from the Dashboard
         currency: "INR",
         name: "Marengo Edutech",
-        description: "Test Transaction",
+        description: `${course.value.cName}`,
         image: "",
         order_id: `${order}`, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
         handler: (response) => {
@@ -332,7 +332,7 @@ export default {
         },
 
         notes: {
-          address: "Razorpay Corporate Office",
+          address: `Marengo Edutech Pvt Ltd,Building No: 12/376,North Aryad P.O,Alappuzha-688538`,
         },
         theme: {
           color: "#3399cc",

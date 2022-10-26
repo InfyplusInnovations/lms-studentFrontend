@@ -95,12 +95,12 @@
               <q-spinner-ios v-if="loading" color="white" size="1em"
             /></q-btn>
           </form>
-          <!-- <div class="p-3 text-accent">
+          <div class="p-3 text-accent">
             No account? create a new account by
             <router-link to="/register" class="font-bold text-accent"
               >Registering</router-link
             >
-          </div> -->
+          </div>
         </div>
       </div>
     </q-page>

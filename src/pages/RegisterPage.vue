@@ -243,7 +243,10 @@
                     label="Email"
                     name="email"
                     dense
-                    :rules="[(val) => !!val || 'Field is required']"
+                    :rules="[
+                      (val) => !!val || 'Field is required',
+                      (val) => val.match(emailPattern) || 'invalidEmail',
+                    ]"
                     :hint="emailExists == true ? 'Email already exists!' : ''"
                     required
                     type="email"
@@ -313,6 +316,7 @@
                   <q-btn
                     @click="
                       () => {
+                        if (step == 3) return $router.push('/login');
                         if (step == 2) return handleFormSubmit();
                         return $refs.stepper.next();
                       }
