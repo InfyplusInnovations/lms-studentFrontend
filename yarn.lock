@@ -323,6 +323,11 @@
   resolved "https://registry.yarnpkg.com/@unocss/core/-/core-0.45.22.tgz#95dcbb178a3263ff04c3a71438cbae478c9fec56"
   integrity sha512-x6t6XlVpt7VXGC31Tr/KRS8WkURcTO6n0lK2k5zS+cIvc9xpLtwQw8C0c+/NULxbDNo205qfIuB703mmPABLjw==
 
+"@unocss/core@0.50.1":
+  version "0.50.1"
+  resolved "https://registry.yarnpkg.com/@unocss/core/-/core-0.50.1.tgz#ad4659b7abc43b77458aa29214d83ad0e687da9c"
+  integrity sha512-jnWClMMGybzyXcRX4DY+g/DJ4JrH9w8YN/H6OTHt0WyrNfR1V3ebJtEc6gbqCkZCh2XmqSA5F49QPhTbErYePg==
+
 "@unocss/inspector@0.45.22":
   version "0.45.22"
   resolved "https://registry.yarnpkg.com/@unocss/inspector/-/inspector-0.45.22.tgz#7b895d65674d5cd16d599fdb82a0ffdbcaa00af3"
@@ -353,6 +358,13 @@
   integrity sha512-gfNmj6qxh3WqfDynOILIyH+mUAMREkNhdZFZZOx+DQ15zv8yV5HMssvisvus7rFmVuETSXFl3aCHnyeCXj8iTw==
   dependencies:
     "@unocss/core" "0.45.22"
+
+"@unocss/preset-mini@0.50.1":
+  version "0.50.1"
+  resolved "https://registry.yarnpkg.com/@unocss/preset-mini/-/preset-mini-0.50.1.tgz#575bbd681f8954bbb06ef24d610a6b99600c8e1d"
+  integrity sha512-asAJHsgNKbfH5aANuaA/1Q0efWPWalGSlLa9V73JXyXO4fbFT86m3o65NPHbm2N9t5IRxTfL3hcuUE/cOGEVLg==
+  dependencies:
+    "@unocss/core" "0.50.1"
 
 "@unocss/preset-tagify@0.45.22":
   version "0.45.22"
@@ -385,13 +397,21 @@
     "@unocss/core" "0.45.22"
     ohmyfetch "^0.4.18"
 
-"@unocss/preset-wind@0.45.22", "@unocss/preset-wind@^0.45.22":
+"@unocss/preset-wind@0.45.22":
   version "0.45.22"
   resolved "https://registry.yarnpkg.com/@unocss/preset-wind/-/preset-wind-0.45.22.tgz#328d9ecc2a423367c9124bc4d222144c23b4bcf1"
   integrity sha512-UC62yEazTXnX72VEjNBTzSDW/LGM5An8JvdiVo28kuHWbVJbwKR15D4sgiR+zdqKiH9TRvKr/QQYy2coODd3+A==
   dependencies:
     "@unocss/core" "0.45.22"
     "@unocss/preset-mini" "0.45.22"
+
+"@unocss/preset-wind@^0.50.1":
+  version "0.50.1"
+  resolved "https://registry.yarnpkg.com/@unocss/preset-wind/-/preset-wind-0.50.1.tgz#6c9bb10405a8be2c9cb2879718f94bfbd387755c"
+  integrity sha512-+gDGdundQTgyEiK9Y0DbVCxjT5Miu7vBGtcsp0AyLojz/cHkdDBL/1X34fWTA7mejnFgs/e2m0BlFVwAj9ZZiQ==
+  dependencies:
+    "@unocss/core" "0.50.1"
+    "@unocss/preset-mini" "0.50.1"
 
 "@unocss/reset@0.45.22":
   version "0.45.22"
